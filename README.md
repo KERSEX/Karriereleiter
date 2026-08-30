@@ -32,11 +32,13 @@ Touchgeräten erscheint automatisch ein Bildschirm-Steuerkreuz. Sämtliche Menü
 — auch das Cheat-Terminal mit seiner Bildschirmtastatur — lassen sich
 vollständig mit dem Controller bedienen.
 
-**Der Automat lässt sich anfassen:** den Joystick am Gehäuse kann man mit Maus
-oder Finger in alle Richtungen ziehen — er kippt dabei räumlich um seinen Fuß
-und schnappt beim Loslassen zurück. Die Knöpfe **A** (springen) und **B**
-(Start) sind anklickbar. Tastatur, Controller und Gehäuse steuern dasselbe
-Spiel; der Joystick zeigt immer die aktuelle Eingabe.
+**Der Automat lässt sich anfassen:** den Kugelgriff am Gehäuse kann man mit
+Maus oder Finger in alle Richtungen ziehen. Der Stick ist als SVG gebaut —
+Montageplatte, Staubkappe, Chromschaft und Kugel bewegen sich einzeln, eine
+gedämpfte Feder zieht ihn beim Loslassen mit leichtem Überschwingen zurück.
+Die Knöpfe **A** (springen) und **B** (Start) sind anklickbar. Tastatur,
+Controller und Gehäuse steuern dasselbe Spiel; der Stick zeigt immer die
+aktuelle Eingabe.
 
 **Klettern:** einfach ↑ gedrückt halten. Wer bis zu ~25 px neben einer heilen
 Leiter steht, rutscht automatisch hin und steigt ein; die erreichbare Leiter
@@ -87,7 +89,7 @@ Punkte kommen nicht in die Bestenliste.
 
 | Code | Wirkung |
 |---|---|
-| `KAOS` | **Chaos-Modus** — alle paar Sekunden ein neues Zufallsereignis: vertauschte Steuerung, Mondgravitation, Kaffeeregen, Erdbeben, Büro-Disco, Aktenflut, Mini-Modus … |
+| `KAOS` | **Chaos-Modus** — siehe unten |
 | `KAFFEE` | Endlos-Espresso |
 | `HOMEOFFICE` | Geistmodus (unverwundbar) |
 | `TURBO` | Überstunden — alles deutlich schneller |
@@ -103,6 +105,28 @@ Punkte kommen nicht in die Bestenliste.
 | `IDDQD` | Gruß an 1993 |
 
 Und natürlich: **↑ ↑ ↓ ↓ ← → ← → B A** schaltet alles auf einmal frei.
+
+### Chaos-Modus
+
+`KAOS` schaltet einen Modus ein, in dem **immer** ein Ereignis läuft: läuft
+eines aus, startet sofort das nächste. Im HUD blinkt dauerhaft ein
+regenbogenfarbenes `KAOS`, darunter steht, was gerade los ist:
+
+| Ereignis | Was passiert |
+|---|---|
+| Steuerung vertauscht | links und rechts sind getauscht |
+| Mondgravitation | Sprünge werden schwerelos |
+| Alle hektisch | Gegner und Spieler laufen deutlich schneller |
+| Kaffeeregen | Tassen prasseln von oben herein |
+| Mini-Modus | der Held schrumpft |
+| Büro-Disco | die Palette rotiert durch alle Farben |
+| Erdbeben | der Bildschirm wackelt dauerhaft |
+| Spiegelverkehrt | das ganze Bild ist gespiegelt |
+| Alles steht Kopf | das Bild steht auf dem Kopf |
+| Stromausfall | nur noch ein Lichtkegel um den Helden |
+| Betriebsfeier | Konfettiregen |
+| Aktenflut | der Chef wirft fünf Tassen auf einmal |
+| Neue Deadline | ein zusätzliches Feuer erscheint |
 
 ## Technisches
 
