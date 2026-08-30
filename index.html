@@ -100,28 +100,54 @@ canvas{ image-rendering:pixelated; image-rendering:crisp-edges; display:block; b
   display:flex; align-items:center; justify-content:space-between;
   padding:0 calc(var(--u)*16);
 }
-.joy{ position:relative; width:calc(var(--u)*26); height:calc(var(--u)*26); }
+.joy{
+  position:relative; width:calc(var(--u)*30); height:calc(var(--u)*30);
+  perspective:calc(var(--u)*80); perspective-origin:50% 90%;
+  cursor:grab; touch-action:none;
+}
+.joy.drag{ cursor:grabbing; }
 .joy .plate{
   position:absolute; inset:0; border-radius:50%;
-  background:radial-gradient(circle at 50% 40%,#4a5268,#12161f 70%);
-  box-shadow:inset 0 0 0 calc(var(--u)*1) #566080;
+  background:radial-gradient(circle at 50% 34%,#525b73,#0d1119 74%);
+  box-shadow:inset 0 0 0 calc(var(--u)*1) #5c6684,
+             inset 0 calc(var(--u)*2) calc(var(--u)*3) rgba(0,0,0,.6),
+             0 calc(var(--u)*2) calc(var(--u)*4) rgba(0,0,0,.55);
 }
-.joy .shaft{
-  position:absolute; left:50%; top:calc(var(--u)*4); width:calc(var(--u)*4); height:calc(var(--u)*12);
-  transform:translateX(-50%); background:linear-gradient(90deg,#7b8398,#c6ccdb,#5c6479);
-  border-radius:calc(var(--u)*2);
+.joy .dust{
+  position:absolute; left:50%; top:50%; width:calc(var(--u)*14); height:calc(var(--u)*14);
+  margin:calc(var(--u)*-7) 0 0 calc(var(--u)*-7); border-radius:50%;
+  background:radial-gradient(circle at 50% 35%,#252b39,#05070b 80%);
+  box-shadow:inset 0 0 calc(var(--u)*3) #000;
 }
-.joy .ball{
-  position:absolute; left:50%; top:calc(var(--u)*-6); width:calc(var(--u)*14); height:calc(var(--u)*14);
-  transform:translateX(-50%);
+.stick{
+  position:absolute; left:50%; bottom:46%;
+  width:calc(var(--u)*5); height:calc(var(--u)*16);
+  margin-left:calc(var(--u)*-2.5);
+  transform-origin:50% 100%; transform-style:preserve-3d;
+  transition:transform .22s cubic-bezier(.34,1.62,.58,1);
+}
+.joy.drag .stick{ transition:transform .04s linear; }
+.stick .shaft{
+  position:absolute; inset:0; border-radius:calc(var(--u)*2.5) calc(var(--u)*2.5) 0 0;
+  background:linear-gradient(90deg,#4d5568 0%,#aeb6c8 32%,#f2f5fb 46%,#98a0b4 62%,#3f4657 100%);
+  box-shadow:0 calc(var(--u)*1) calc(var(--u)*2) rgba(0,0,0,.5);
+}
+.stick .ball{
+  position:absolute; left:50%; top:calc(var(--u)*-12);
+  width:calc(var(--u)*16); height:calc(var(--u)*16); margin-left:calc(var(--u)*-8);
   border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#ff8f7a,#e2352b 55%,#7d120c 100%);
-  box-shadow:0 calc(var(--u)*2) calc(var(--u)*4) rgba(0,0,0,.6);
-  transition:transform .06s linear;
+  background:radial-gradient(circle at 34% 26%,#ffb0a0 0%,#f0483a 45%,#b4180f 72%,#6b0d07 100%);
+  box-shadow:0 calc(var(--u)*3) calc(var(--u)*5) rgba(0,0,0,.55),
+             inset 0 calc(var(--u)*-3) calc(var(--u)*4) rgba(0,0,0,.35);
+}
+.stick .ball:after{
+  content:""; position:absolute; left:26%; top:16%; width:26%; height:20%;
+  border-radius:50%; background:rgba(255,255,255,.55); filter:blur(1px);
 }
 .btns{ display:flex; gap:calc(var(--u)*10); align-items:center; }
 .bt{
-  width:calc(var(--u)*15); height:calc(var(--u)*15); border-radius:50%;
+  width:calc(var(--u)*16); height:calc(var(--u)*16); border-radius:50%;
+  cursor:pointer; touch-action:none; user-select:none;
   display:flex; align-items:center; justify-content:center;
   font-size:calc(var(--u)*6); font-weight:900; color:rgba(0,0,0,.45);
   box-shadow:inset 0 calc(var(--u)*-2) 0 rgba(0,0,0,.35), 0 calc(var(--u)*2) calc(var(--u)*3) rgba(0,0,0,.5);
@@ -233,8 +259,10 @@ body.noscan #scanlines,body.noscan #glare{display:none}
     </div>
   </div>
   <div class="cab-panel">
-    <div class="joy">
-      <div class="plate"></div><div class="shaft"></div><div class="ball" id="joyball"></div>
+    <div class="joy" id="joy" title="Ziehen zum Steuern">
+      <div class="plate"></div>
+      <div class="dust"></div>
+      <div class="stick" id="stick"><div class="shaft"></div><div class="ball"></div></div>
     </div>
     <div class="panel-label">1 PLAYER</div>
     <div class="btns"><div class="bt b1" id="btA">A</div><div class="bt b2" id="btB">B</div></div>
@@ -601,7 +629,7 @@ function stage3(){
     plats, lads, rivets,
     start:{x:16,y:0}, chef:{x:112,y:66,type:'sitter'}, goal:{x:150,y:66},
     items:[ mkItem(60,halves[0][1],'tasche'), mkItem(40,halves[2][0],'handy') ],
-    hammers:[ mkHam(160,halves[0][1]) ],
+    hammers:[ mkHam(174,halves[0][1]) ],
     flames:{ n:3, from:{x:112,y:244} },
     collapseTop:top,
   };
@@ -628,7 +656,7 @@ function stage4(){
     plats, lads,
     start:{x:16,y:0}, chef:{x:52,y:70,type:'boss'}, goal:{x:196,y:70},
     items:[ mkItem(140,rows[1],'handy'), mkItem(70,rows[2],'krawatte'), mkItem(160,rows[4],'tasche') ],
-    hammers:[ mkHam(60,rows[1]), mkHam(96,rows[3]) ],
+    hammers:[ mkHam(60,rows[1]), mkHam(70,rows[3]) ],
     barrels:{ every:1.35, wildChance:0.35 },
     memos:{ every:1.1, rows:rows.slice(1,5) },
     flames:{ n:2, from:{x:112,y:244} },
@@ -726,9 +754,10 @@ function landing(x, feetPrev, feetNow){
 // mode: 'up' = am Fuss einsteigen, 'down' = oben einsteigen, 'grab' = mittendrin
 const LAD_GRAB = 11;   // wie weit seitlich man eine Leiter noch erwischt
 const LAD_HELP = 26;   // ab hier rutscht man beim Halten von Hoch/Runter hin
-function findLadder(cx, feet, mode, maxDX=LAD_GRAB){
+function findLadder(cx, feet, mode, maxDX=LAD_GRAB, healthyOnly=false){
   let best=null, bd=999;
   for(const l of L.lads){
+    if(healthyOnly && l.broken) continue;
     const d = Math.abs(cx - l.x);
     if(d > maxDX) continue;
     let ok=false;
@@ -739,7 +768,7 @@ function findLadder(cx, feet, mode, maxDX=LAD_GRAB){
   }
   return best;
 }
-function ladLimit(l){ return l.broken ? l.yTop + (l.yBot-l.yTop)*0.40 : l.yTop; }
+function ladLimit(l){ return l.broken ? l.yTop + (l.yBot-l.yTop)*0.62 : l.yTop; }
 
 function updatePlayer(dt){
   const p = P_;
@@ -760,7 +789,7 @@ function updatePlayer(dt){
     if(mv && (G.frame%9===0)) SFX.climb();
     const feet = p.y+p.h;
     if(feet < lim){ // oben raus
-      if(l.broken){ p.y = lim - p.h; }
+      if(l.broken){ p.y = lim - p.h; if(IN.held.up) hintBroken(l); }
       else {
         p.onLad=false; p.plat=l.top; p.y = surfaceY(l.top,p.x+p.w/2)-p.h; p.vy=0;
       }
@@ -826,18 +855,25 @@ function updatePlayer(dt){
       const l = (p.plat ? findLadder(cx,feetNow,'up') : null) || findLadder(cx,feetNow,'grab');
       if(l && feetNow > ladLimit(l)+2){ p.onLad=true; p.lad=l; p.plat=null; p.vy=0; p.x=l.x-p.w/2; }
       else if(p.plat && !steering){
-        // Einstieghilfe: wer Hoch hält, rutscht sanft zur nächsten Leiter
-        const n = findLadder(cx,feetNow,'up',LAD_HELP);
-        if(n){ const d=Math.sign(n.x-cx); p.x += d*0.6; p.dir = d||p.dir; }
+        // Einstieghilfe: wer Hoch hält, rutscht sanft zur nächsten heilen Leiter.
+        // Kräftiger als ein Förderband, damit das Band einen nicht wegzieht.
+        const n = findLadder(cx,feetNow,'up',LAD_HELP,true);
+        if(n){ const d=Math.sign(n.x-cx); p.x += d*(p.plat.conv?1.3:0.75); p.dir = d||p.dir; }
+        else if(l) hintBroken(l);
       }
+      else if(l && l.broken && Math.abs((p.y+p.h)-ladLimit(l))<3) hintBroken(l);
     } else if(IN.held.down && p.plat){
       const l = findLadder(cx,feetNow,'down');
       if(l){ p.onLad=true; p.lad=l; p.plat=null; p.vy=0; p.x=l.x-p.w/2; p.y = l.yTop-p.h+3; }
       else if(!steering){
-        const n = findLadder(cx,feetNow,'down',LAD_HELP);
-        if(n){ const d=Math.sign(n.x-cx); p.x += d*0.6; p.dir = d||p.dir; }
+        const n = findLadder(cx,feetNow,'down',LAD_HELP,true);
+        if(n){ const d=Math.sign(n.x-cx); p.x += d*(p.plat.conv?1.3:0.75); p.dir = d||p.dir; }
       }
     }
+  }
+  if(p.hammer>0 && IN.held.up && brokenHintT<=0 && findLadder(cx,p.y+p.h,'up',16)){
+    brokenHintT = 2.2;
+    pop(p.x-20, p.y-14, 'ERST AUSTRINKEN', '#ffb03a');
   }
   if(p.y > PH+20){ killPlayer('sturz'); }
   if(p.plat && p.vy>0) p.vy=0;
@@ -1019,6 +1055,13 @@ function updateChef(dt){
 
 /* ---------------------------------------------------- Treffer & Punkte */
 function pop(x,y,txt,col){ pops.push({x,y,txt,col:col||'#fff',t:1.1}); }
+let brokenHintT = 0;
+function hintBroken(l){
+  if(!l || !l.broken || brokenHintT>0) return;
+  brokenHintT = 2.2;
+  pop(l.x-16, ladLimit(l)-14, 'LEITER KAPUTT', '#ff6a5c');
+  SFX.no();
+}
 function addScore(n){
   const mult = (S.difficulty===3?2:1)*(CHEAT.kaos?1:1);
   G.score += n*mult;
@@ -1326,18 +1369,29 @@ function drawLads(){
   const st = stylePal();
   for(const l of L.lads){
     const hot = nearLadder(l);
-    const col = hot ? '#ffffff' : st.lad;
+    const col = hot ? '#ffffff' : (l.broken ? '#8a6a4a' : st.lad);
     const lim = ladLimit(l);
     const drawRung=(y)=>{ px(l.x-4,y,9,1,col); };
-    const top = l.broken? lim : l.yTop;
-    px(l.x-5,top-2,2,(l.yBot-top)+2, col);
-    px(l.x+4,top-2,2,(l.yBot-top)+2, col);
-    for(let y=l.yBot-4;y>top;y-=5) drawRung(y);
-    if(l.broken){
-      px(l.x-5,l.yTop-2,2,(lim-l.yTop)-6, col);
-      px(l.x+4,l.yTop-2,2,(lim-l.yTop)-6, col);
-      for(let y=l.yTop+2;y<lim-8;y+=5) drawRung(y);
-      px(l.x-6,lim-6,12,1,'#ff4a4a');
+    if(!l.broken){
+      px(l.x-5,l.yTop-2,2,(l.yBot-l.yTop)+2, col);
+      px(l.x+4,l.yTop-2,2,(l.yBot-l.yTop)+2, col);
+      for(let y=l.yBot-4;y>l.yTop;y-=5) drawRung(y);
+    } else {
+      // unteres Reststück
+      px(l.x-5,lim,2,(l.yBot-lim), col);
+      px(l.x+4,lim,2,(l.yBot-lim), col);
+      for(let y=l.yBot-4;y>lim+2;y-=5) drawRung(y);
+      // abgebrochene Enden ausfransen
+      px(l.x-5,lim-2,2,2,col); px(l.x+4,lim-1,2,1,col);
+      // oberes Reststück, dazwischen klafft eine deutliche Lücke
+      const gapTop = lim - 16;
+      px(l.x-5,l.yTop-2,2,(gapTop-l.yTop)+2, col);
+      px(l.x+4,l.yTop-2,2,(gapTop-l.yTop)+2, col);
+      for(let y=l.yTop+2;y<gapTop-2;y+=5) drawRung(y);
+      px(l.x-5,gapTop,2,1,col); px(l.x+4,gapTop+1,2,2,col);
+      // Warnband an der Bruchstelle
+      for(let i=0;i<3;i++) px(l.x-7+i*5, lim-9, 3, 2, i%2? '#1a1a1a':'#ffd23d');
+      for(let i=0;i<3;i++) px(l.x-5+i*5, gapTop+4, 3, 2, i%2? '#ffd23d':'#1a1a1a');
     }
   }
   // Blinkender Pfeil, wenn man direkt am Leiterfuss steht
@@ -1613,6 +1667,7 @@ function updateKaos(dt){
 }
 function updatePlay(dt){
   G.frame++;
+  if(brokenHintT>0) brokenHintT-=dt;
   updateKaos(dt);
   // Bonus-Uhr
   G.bonusT += dt;
@@ -1756,7 +1811,7 @@ function drawTitle(){
   textS('ENTER  /  GAMEPAD A', CW/2, 230, '#8f9ab8','center',8);
   textS(IN.padIndex>=0? 'PAD '+IN.padName.slice(0,16) : 'F1 CHEATS   F2 OPTIONEN',
         CW/2, 244, '#57d9ff','center',8);
-  textS('(C) 1981 KERSEX INDUSTRIES', CW/2, 258,'#5f6a86','center',8);
+  textS('(C) 1981 KERS INDUSTRIES', CW/2, 258,'#5f6a86','center',8);
 }
 function drawScores(){
   px(0,0,CW,CH,'#05060f');
@@ -1949,6 +2004,25 @@ const keysMenu = {
   ]),
   note:'Gamepad-Belegung ist fest: D-Pad/Stick = laufen & klettern,\nA/X = springen, Start = Pause, Select/B = zurück.',
 };
+let typeBuf = '';
+function globalCodeType(e){
+  if(cheatScreen.active || capturing) return false;
+  let ch = null;
+  if(/^Key[A-Z]$/.test(e.code)) ch = e.code[3];
+  else if(/^Digit[0-9]$/.test(e.code)) ch = e.code[5];
+  if(!ch){ if(e.code==='Escape'||e.code==='Enter') typeBuf=''; return false; }
+  typeBuf = (typeBuf + ch).slice(-16);
+  for(const code in CODES){
+    if(typeBuf.endsWith(code)){
+      typeBuf = '';
+      cheatScreen.open();          // Cheat-Menü aufklappen ...
+      cheatScreen.code = code;
+      cheatScreen.submit();        // ... und den erkannten Code gleich anwenden
+      return true;
+    }
+  }
+  return false;
+}
 hooks.key = (e)=>{
   if(capturing){
     e.preventDefault();
@@ -1956,6 +2030,7 @@ hooks.key = (e)=>{
     capturing=null; rawKeys.clear(); drawMenu(); return;
   }
   if(cheatScreen.active){ cheatScreen.typeKey(e); return; }
+  if(globalCodeType(e)) return;
   if(e.code==='F1'){ e.preventDefault(); if(!cheatScreen.active) cheatScreen.open(); return; }
   if(e.code==='F2'){ e.preventDefault(); if(!menuOpen()) openMenu(settingsMenu); return; }
 };
@@ -2100,17 +2175,75 @@ function checkKonami(){
 /*  HAUPTSCHLEIFE, SKALIERUNG, TOUCH                                     */
 /* ===================================================================== */
 const flashEl = document.getElementById('flash');
-const joyBall = document.getElementById('joyball');
-const btAEl = document.getElementById('btA'), btBEl = document.getElementById('btB');
-let joyLast = '';
+const joyEl  = document.getElementById('joy');
+const stickEl= document.getElementById('stick');
+const btAEl  = document.getElementById('btA'), btBEl = document.getElementById('btB');
+
+/* ---- Joystick am Gehäuse: mit Maus/Finger ziehbar ------------------- */
+const JOY_DZ = 0.36;                       // Totzone bis eine Richtung zählt
+let joyDrag = null, joyLast = '';
+function joyDirs(nx, ny){
+  touchHeld.left  = nx < -JOY_DZ;
+  touchHeld.right = nx >  JOY_DZ;
+  touchHeld.up    = ny < -JOY_DZ;
+  touchHeld.down  = ny >  JOY_DZ;
+}
+function joyFromEvent(e){
+  const r = joyEl.getBoundingClientRect();
+  const rad = r.width*0.46;
+  let nx = (e.clientX-(r.left+r.width/2))/rad;
+  let ny = (e.clientY-(r.top +r.height*0.62))/rad;
+  const len = Math.hypot(nx,ny);
+  if(len>1){ nx/=len; ny/=len; }
+  joyDrag = {nx,ny}; joyDirs(nx,ny);
+}
+if(joyEl){
+  joyEl.addEventListener('pointerdown', e=>{
+    e.preventDefault(); audioUnlock();
+    try{ joyEl.setPointerCapture(e.pointerId); }catch(_){}
+    joyEl.classList.add('drag'); joyFromEvent(e);
+  });
+  joyEl.addEventListener('pointermove', e=>{ if(joyDrag) joyFromEvent(e); });
+  const stop = ()=>{
+    if(!joyDrag) return;
+    joyDrag = null; joyEl.classList.remove('drag');
+    touchHeld.left=touchHeld.right=touchHeld.up=touchHeld.down=false;
+  };
+  joyEl.addEventListener('pointerup', stop);
+  joyEl.addEventListener('pointercancel', stop);
+  joyEl.addEventListener('lostpointercapture', stop);
+}
+/* ---- Knöpfe am Gehäuse anklickbar ---------------------------------- */
+function hookCabButton(el, action){
+  if(!el) return;
+  el.addEventListener('pointerdown', e=>{
+    e.preventDefault(); audioUnlock();
+    try{ el.setPointerCapture(e.pointerId); }catch(_){}
+    touchHeld[action]=true;
+  });
+  const off = ()=>{ touchHeld[action]=false; };
+  el.addEventListener('pointerup', off);
+  el.addEventListener('pointercancel', off);
+  el.addEventListener('lostpointercapture', off);
+}
+hookCabButton(btAEl,'jump');
+hookCabButton(btBEl,'start');
+
 function animateCabinet(){
-  if(!joyBall) return;
-  const dx = (IN.held.right?1:0)-(IN.held.left?1:0);
-  const dy = (IN.held.down?1:0)-(IN.held.up?1:0);
-  const key = dx+','+dy+','+(IN.held.jump?1:0)+','+((IN.held.start||IN.held.pause)?1:0);
+  if(!stickEl) return;
+  let nx, ny;
+  if(joyDrag){ nx = joyDrag.nx; ny = joyDrag.ny; }
+  else {
+    nx = (IN.held.right?1:0)-(IN.held.left?1:0);
+    ny = (IN.held.down?1:0)-(IN.held.up?1:0);
+    const len = Math.hypot(nx,ny); if(len>1){ nx/=len; ny/=len; }
+  }
+  const key = nx.toFixed(2)+','+ny.toFixed(2)+','+(IN.held.jump?1:0)+','+((IN.held.start||IN.held.pause)?1:0);
   if(key===joyLast) return;
   joyLast = key;
-  joyBall.style.transform = `translateX(-50%) translate(${dx*26}%, ${dy*20}%) rotate(${dx*10}deg)`;
+  // echter Kippwinkel um den Fuß des Schafts – der Ball läuft auf einer Kugelbahn
+  const MAX = 26;
+  stickEl.style.transform = `rotateY(${(nx*MAX).toFixed(1)}deg) rotateX(${(-ny*MAX).toFixed(1)}deg)`;
   btAEl.classList.toggle('on', IN.held.jump);
   btBEl.classList.toggle('on', IN.held.start||IN.held.pause);
 }

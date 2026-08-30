@@ -32,11 +32,22 @@ Touchgeräten erscheint automatisch ein Bildschirm-Steuerkreuz. Sämtliche Menü
 — auch das Cheat-Terminal mit seiner Bildschirmtastatur — lassen sich
 vollständig mit dem Controller bedienen.
 
-**Klettern:** einfach ↑ gedrückt halten. Wer bis zu ~25 px neben einer Leiter
-steht, rutscht automatisch hin und steigt ein; die erreichbare Leiter leuchtet
-weiß auf und ein blinkender Pfeil zeigt den Einstieg. Sprünge haben Kojotenzeit
-(kurz nach der Kante zählt noch) und einen Sprungpuffer (kurz vor der Landung
-gedrückt zählt auch).
+**Der Automat lässt sich anfassen:** den Joystick am Gehäuse kann man mit Maus
+oder Finger in alle Richtungen ziehen — er kippt dabei räumlich um seinen Fuß
+und schnappt beim Loslassen zurück. Die Knöpfe **A** (springen) und **B**
+(Start) sind anklickbar. Tastatur, Controller und Gehäuse steuern dasselbe
+Spiel; der Joystick zeigt immer die aktuelle Eingabe.
+
+**Klettern:** einfach ↑ gedrückt halten. Wer bis zu ~25 px neben einer heilen
+Leiter steht, rutscht automatisch hin und steigt ein; die erreichbare Leiter
+leuchtet weiß auf und ein blinkender Pfeil zeigt den Einstieg. Sprünge haben
+Kojotenzeit (kurz nach der Kante zählt noch) und einen Sprungpuffer (kurz vor
+der Landung gedrückt zählt auch).
+
+**Kaputte Leitern** sind rostbraun statt blau, haben eine sichtbare Lücke mit
+Warnband und enden nach kurzer Zeit — die Einstieghilfe fasst sie gar nicht
+erst an. Und mit dem Espresso-Hammer in der Hand klettert niemand: erst
+austrinken.
 
 ## Die vier Etagen
 
@@ -66,9 +77,13 @@ Nach der Chefetage beginnt Runde 2 — schneller, mehr Gegner, mehr Bonus.
 
 ## Cheat-Terminal
 
-Im Pausemenü oder mit **F1**. Code über Tastatur tippen oder mit dem Controller
-auf der Bildschirmtastatur eingeben, dann `OK`. Gefundene Codes bleiben
-gespeichert. Mit Cheats erspielte Punkte kommen nicht in die Bestenliste.
+Codes lassen sich **jederzeit einfach eintippen** — im Titelbild, mitten im
+Spiel, egal wo. Wer `KAOS` tippt, bekommt sofort das Cheat-Terminal aufgeklappt
+und den Chaos-Modus eingeschaltet; das gilt für jeden Code der Liste. Wer lieber
+klickt: Pausemenü oder **F1** öffnet das Terminal, dort tippt man den Code über
+die Tastatur oder gibt ihn mit dem Controller auf der Bildschirmtastatur ein und
+bestätigt mit `OK`. Gefundene Codes bleiben gespeichert. Mit Cheats erspielte
+Punkte kommen nicht in die Bestenliste.
 
 | Code | Wirkung |
 |---|---|
