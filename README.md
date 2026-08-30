@@ -27,9 +27,16 @@ werden zur Laufzeit erzeugt (Canvas 2D + WebAudio + Gamepad API).
 | Optionen | F2 | Pausemenü → Optionen |
 
 Controller werden automatisch erkannt (Standard-Gamepad-Mapping), inklusive
-Vibration. Auf Touchgeräten erscheint automatisch ein Bildschirm-Steuerkreuz.
-Sämtliche Menüs — auch das Cheat-Terminal mit seiner Bildschirmtastatur —
-lassen sich vollständig mit dem Controller bedienen.
+Vibration; Joystick und Knöpfe am Automatengehäuse bewegen sich mit. Auf
+Touchgeräten erscheint automatisch ein Bildschirm-Steuerkreuz. Sämtliche Menüs
+— auch das Cheat-Terminal mit seiner Bildschirmtastatur — lassen sich
+vollständig mit dem Controller bedienen.
+
+**Klettern:** einfach ↑ gedrückt halten. Wer bis zu ~25 px neben einer Leiter
+steht, rutscht automatisch hin und steigt ein; die erreichbare Leiter leuchtet
+weiß auf und ein blinkender Pfeil zeigt den Einstieg. Sprünge haben Kojotenzeit
+(kurz nach der Kante zählt noch) und einen Sprungpuffer (kurz vor der Landung
+gedrückt zählt auch).
 
 ## Die vier Etagen
 
@@ -51,7 +58,10 @@ Nach der Chefetage beginnt Runde 2 — schneller, mehr Gegner, mehr Bonus.
 - **Bestenliste** mit Kürzel-Eingabe, lokal gespeichert.
 - **Kaputte Leitern**, Abkürzungen, Alternativrouten.
 - Vier Schwierigkeitsgrade (Praktikant / Normal / Manager / Burnout).
-- CRT-Look mit Scanlines, Bildschirmbeben, Chiptune-Musik und -Effekten.
+- **Arcade-Automat als Rahmen** — Marquee, Bezel, Bedienfeld mit mitlaufendem
+  Joystick, Münzeinwurf. Abschaltbar unter Optionen → *Automat anzeigen*, dann
+  füllt das Spielbild mehr Fläche.
+- CRT-Look mit Scanlines, Blendreflex, Bildschirmbeben, Chiptune-Musik und -Effekten.
 - Alle Einstellungen und Tastenbelegungen frei konfigurierbar und dauerhaft gespeichert.
 
 ## Cheat-Terminal
@@ -82,6 +92,10 @@ Und natürlich: **↑ ↑ ↓ ↓ ← → ← → B A** schaltet alles auf einma
 ## Technisches
 
 - Interne Auflösung 224 × 272 Pixel, ganzzahlig hochskaliert (`image-rendering: pixelated`).
+  Das Automatengehäuse ist in derselben Einheit gebaut (CSS-Variable `--u`) und
+  skaliert deshalb pixelgenau mit.
+- Eigene 5×7-Bitmapschrift, gerendert als echte Pixelrechtecke und pro Text
+  zwischengespeichert — kein Antialiasing, keine Schriftdatei.
 - Feste Physik-Schrittweite (60 Hz) mit Akkumulator — gleiche Sprungweiten auf jedem Monitor.
 - Plattformen sind Strecken mit Steigung; Tassen rollen immer bergab und nehmen
   zufällig Leitern nach unten.

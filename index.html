@@ -2,95 +2,248 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>KARRIERELEITER — Arcade 1981</title>
 <style>
-:root{
-  --neon:#ffcc00; --neon2:#ff4d3d; --ink:#05060a; --panel:#0d1018;
-}
+:root{ --u:2px; --neon:#ffcc00; }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0; background:
-    radial-gradient(120% 90% at 50% 0%, #1a2030 0%, #090b12 55%, #04050a 100%);
-  color:#e8ecf5; font-family:"Courier New",ui-monospace,monospace;
+  margin:0; overflow:hidden; user-select:none; -webkit-user-select:none; touch-action:none;
+  font-family:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,"Courier New",monospace;
+  color:#e8ecf5;
   display:flex; align-items:center; justify-content:center;
-  overflow:hidden; user-select:none; -webkit-user-select:none; touch-action:none;
+  background:
+    radial-gradient(90% 60% at 50% 8%,  rgba(120,60,180,.16) 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(70% 50% at 12% 90%, rgba(0,140,190,.13) 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(70% 50% at 88% 90%, rgba(220,60,80,.11) 0%, rgba(0,0,0,0) 60%),
+    linear-gradient(#0a0a10 0%, #0a0a10 62%, #0d0d16 62.2%, #06060b 100%);
 }
-#cab{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:10px; }
-#marquee{
-  font-weight:bold; letter-spacing:.34em; font-size:15px;
-  color:var(--neon); text-shadow:0 0 6px #ff9d00,0 0 18px #ff5a00;
-  animation:flick 6s infinite steps(1);
+/* Bodenraster des Spielhallenraums */
+body:after{
+  content:""; position:fixed; left:-20%; right:-20%; bottom:0; height:38%;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(0deg,  rgba(255,255,255,.05) 0 1px, transparent 1px 34px);
+  transform:perspective(320px) rotateX(72deg); transform-origin:bottom center;
+  pointer-events:none; z-index:0;
 }
-@keyframes flick{0%,97%{opacity:1}97.5%{opacity:.55}98%{opacity:1}99%{opacity:.7}99.5%{opacity:1}}
+
+/* ============================== AUTOMAT ============================== */
+#cab{
+  position:relative; z-index:1;
+  width:calc(var(--u)*262);
+  padding:0 calc(var(--u)*10) calc(var(--u)*10);
+  border-radius:calc(var(--u)*14) calc(var(--u)*14) calc(var(--u)*4) calc(var(--u)*4);
+  background:
+    linear-gradient(180deg,#2a2f42 0%,#1d2131 8%,#171b28 60%,#12151f 100%),
+    #171b28;
+  box-shadow:
+    inset 0 0 0 calc(var(--u)*1) #39405a,
+    inset calc(var(--u)*4) 0 0 rgba(255,255,255,.05),
+    inset calc(var(--u)*-4) 0 0 rgba(0,0,0,.35),
+    0 calc(var(--u)*10) calc(var(--u)*30) rgba(0,0,0,.75);
+}
+body.nocab #cab{ width:auto; padding:0; background:none; box-shadow:none; }
+body.nocab .cab-marquee,body.nocab .cab-panel,body.nocab .cab-coin,body.nocab .cab-vents{display:none}
+/* Seitenstreifen ("Side Art") */
+#cab:before,#cab:after{
+  content:""; position:absolute; top:calc(var(--u)*56); bottom:calc(var(--u)*12);
+  width:calc(var(--u)*4); border-radius:calc(var(--u)*2);
+  background:linear-gradient(180deg,#ff4d3d,#ffcc00 40%,#3ad0ff 75%,#8f6bff);
+  opacity:.75;
+}
+#cab:before{ left:calc(var(--u)*3); } #cab:after{ right:calc(var(--u)*3); }
+body.nocab #cab:before,body.nocab #cab:after{display:none}
+
+.cab-marquee{
+  margin:calc(var(--u)*8) calc(var(--u)*-8) calc(var(--u)*7);
+  height:calc(var(--u)*34); border-radius:calc(var(--u)*4);
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(180deg,#fffdf4,#ffe9b0 45%,#ffcf6a 55%,#ffdf9a 100%);
+  box-shadow:inset 0 0 calc(var(--u)*6) rgba(255,140,0,.55),
+             0 0 calc(var(--u)*14) rgba(255,170,40,.35),
+             inset 0 0 0 calc(var(--u)*1) #6d4a12;
+  overflow:hidden;
+}
+.cab-marquee span{
+  font-weight:900; letter-spacing:.30em; text-indent:.30em;
+  font-size:calc(var(--u)*13); line-height:1;
+  color:#b3231a;
+  text-shadow:0 calc(var(--u)*1) 0 #ffb03a, 0 calc(var(--u)*-1) 0 #7a1410;
+  animation:flick 7s infinite steps(1);
+}
+@keyframes flick{0%,96%{opacity:1}96.5%{opacity:.6}97%{opacity:1}98.5%{opacity:.75}99%{opacity:1}}
+
+.cab-vents{
+  height:calc(var(--u)*5); margin:0 calc(var(--u)*2) calc(var(--u)*6);
+  border-radius:calc(var(--u)*2);
+  background:repeating-linear-gradient(90deg,#0d1018 0 calc(var(--u)*3),#20263a calc(var(--u)*3) calc(var(--u)*6));
+  box-shadow:inset 0 0 calc(var(--u)*3) #000;
+}
+.cab-bezel{
+  padding:calc(var(--u)*9); border-radius:calc(var(--u)*8);
+  background:linear-gradient(180deg,#0c0e16,#05060a);
+  box-shadow:inset 0 0 0 calc(var(--u)*1) #2b3247, inset 0 0 calc(var(--u)*10) #000;
+}
+body.nocab .cab-bezel{padding:calc(var(--u)*3)}
 #screenwrap{
-  position:relative; border:6px solid #14181f; border-radius:10px;
-  background:#000; box-shadow:0 0 0 3px #232a36, 0 12px 50px rgba(0,0,0,.85), 0 0 60px rgba(255,140,0,.10);
-  overflow:hidden; line-height:0;
+  position:relative; line-height:0; overflow:hidden; background:#000;
+  border-radius:calc(var(--u)*3);
+  box-shadow:0 0 calc(var(--u)*12) rgba(90,160,255,.10), inset 0 0 calc(var(--u)*6) #000;
 }
 canvas{ image-rendering:pixelated; image-rendering:crisp-edges; display:block; background:#000; }
+
+/* Bedienfeld */
+.cab-panel{
+  position:relative; height:calc(var(--u)*50); margin:calc(var(--u)*8) calc(var(--u)*-8) 0;
+  border-radius:calc(var(--u)*4) calc(var(--u)*4) calc(var(--u)*2) calc(var(--u)*2);
+  background:linear-gradient(180deg,#2b3145 0%,#20263a 55%,#1a1f2e 100%);
+  box-shadow:inset 0 calc(var(--u)*1) 0 rgba(255,255,255,.10), inset 0 0 0 calc(var(--u)*1) #39405a;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 calc(var(--u)*16);
+}
+.joy{ position:relative; width:calc(var(--u)*26); height:calc(var(--u)*26); }
+.joy .plate{
+  position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle at 50% 40%,#4a5268,#12161f 70%);
+  box-shadow:inset 0 0 0 calc(var(--u)*1) #566080;
+}
+.joy .shaft{
+  position:absolute; left:50%; top:calc(var(--u)*4); width:calc(var(--u)*4); height:calc(var(--u)*12);
+  transform:translateX(-50%); background:linear-gradient(90deg,#7b8398,#c6ccdb,#5c6479);
+  border-radius:calc(var(--u)*2);
+}
+.joy .ball{
+  position:absolute; left:50%; top:calc(var(--u)*-6); width:calc(var(--u)*14); height:calc(var(--u)*14);
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ff8f7a,#e2352b 55%,#7d120c 100%);
+  box-shadow:0 calc(var(--u)*2) calc(var(--u)*4) rgba(0,0,0,.6);
+  transition:transform .06s linear;
+}
+.btns{ display:flex; gap:calc(var(--u)*10); align-items:center; }
+.bt{
+  width:calc(var(--u)*15); height:calc(var(--u)*15); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:calc(var(--u)*6); font-weight:900; color:rgba(0,0,0,.45);
+  box-shadow:inset 0 calc(var(--u)*-2) 0 rgba(0,0,0,.35), 0 calc(var(--u)*2) calc(var(--u)*3) rgba(0,0,0,.5);
+  transition:transform .05s linear, filter .05s linear;
+}
+.bt.b1{ background:radial-gradient(circle at 35% 30%,#ffe27a,#ffb02e 60%,#9a6404); }
+.bt.b2{ background:radial-gradient(circle at 35% 30%,#9df0ff,#2fb8e0 60%,#0a5f7a); }
+.bt.on{ transform:translateY(calc(var(--u)*2)); filter:brightness(1.5); }
+.panel-label{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  font-size:calc(var(--u)*5); letter-spacing:.28em; color:#59627d; white-space:nowrap;
+}
+/* Münzeinwurf */
+.cab-coin{
+  height:calc(var(--u)*24); margin:calc(var(--u)*6) calc(var(--u)*-8) 0;
+  border-radius:calc(var(--u)*2);
+  background:linear-gradient(180deg,#171b28,#0e111a);
+  box-shadow:inset 0 0 0 calc(var(--u)*1) #333a52;
+  display:flex; align-items:center; justify-content:center; gap:calc(var(--u)*10);
+}
+.slot{
+  width:calc(var(--u)*16); height:calc(var(--u)*12); border-radius:calc(var(--u)*1);
+  background:linear-gradient(180deg,#0a0c12,#05060a);
+  box-shadow:inset 0 0 0 calc(var(--u)*1) #4a5268;
+  position:relative;
+}
+.slot:after{
+  content:""; position:absolute; left:50%; top:calc(var(--u)*3); transform:translateX(-50%);
+  width:calc(var(--u)*2); height:calc(var(--u)*6); background:#000; border-radius:calc(var(--u)*1);
+  box-shadow:0 0 0 calc(var(--u)*1) #6b7490;
+}
+.coin-label{ font-size:calc(var(--u)*5); letter-spacing:.24em; color:#6b7490; }
+
+/* ============================ BILDSCHIRM ============================= */
 #scanlines{
   position:absolute; inset:0; pointer-events:none; z-index:5;
-  background:repeating-linear-gradient(to bottom, rgba(0,0,0,.30) 0 1px, rgba(0,0,0,0) 1px 3px);
+  background:repeating-linear-gradient(to bottom, rgba(0,0,0,.32) 0 1px, rgba(0,0,0,0) 1px 3px);
   mix-blend-mode:multiply;
 }
-#vignette{
+#glare{
   position:absolute; inset:0; pointer-events:none; z-index:6;
-  background:radial-gradient(120% 100% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%);
+  background:
+    radial-gradient(60% 40% at 22% 8%, rgba(255,255,255,.055) 0%, rgba(255,255,255,0) 70%),
+    radial-gradient(130% 100% at 50% 50%, rgba(0,0,0,0) 52%, rgba(0,0,0,.62) 100%);
 }
-body.noscan #scanlines,body.noscan #vignette{display:none}
+body.noscan #scanlines,body.noscan #glare{display:none}
+#flash{position:absolute; inset:0; z-index:7; pointer-events:none; background:#fff; opacity:0}
+
+/* =============================== MENÜS ============================== */
 #overlay{
   position:absolute; inset:0; z-index:10; display:none;
-  background:rgba(3,5,10,.90); color:#e9edf6;
-  font-size:11px; line-height:1.5; padding:14px 12px; overflow:auto;
+  background:rgba(4,6,12,.93); color:#e9edf6;
+  padding:calc(var(--u)*7) calc(var(--u)*6); overflow:auto;
+  font-size:calc(var(--u)*5.4); line-height:1.62; letter-spacing:.03em;
 }
 #overlay.on{display:block}
 .m-title{
-  color:var(--neon); letter-spacing:.22em; font-weight:bold; font-size:12px;
-  border-bottom:1px dashed #39425a; padding-bottom:5px; margin-bottom:8px; text-align:center;
-  text-shadow:0 0 8px rgba(255,190,0,.55);
+  color:var(--neon); letter-spacing:.24em; font-weight:800; font-size:calc(var(--u)*6.4);
+  text-align:center; text-shadow:0 0 calc(var(--u)*5) rgba(255,190,0,.6);
+  border-bottom:1px dashed #39425a; padding-bottom:calc(var(--u)*3); margin-bottom:calc(var(--u)*4);
 }
-.m-sub{color:#7f8aa6; text-align:center; margin:-4px 0 8px; font-size:9px; letter-spacing:.12em}
-.m-item{display:flex; justify-content:space-between; gap:8px; padding:2px 6px; border-radius:3px; white-space:nowrap}
+.m-sub{color:#7f8aa6; text-align:center; margin:calc(var(--u)*-2) 0 calc(var(--u)*4);
+  font-size:calc(var(--u)*4.4); letter-spacing:.16em}
+.m-item{display:flex; justify-content:space-between; gap:calc(var(--u)*5);
+  padding:calc(var(--u)*.8) calc(var(--u)*3); border-radius:calc(var(--u)*1.5); white-space:nowrap}
 .m-item .lbl{overflow:hidden; text-overflow:ellipsis}
-.m-item .val{color:#79d0ff}
-.m-item.sel{background:linear-gradient(90deg,#3a2b00,#5b3f00); color:#fff; box-shadow:inset 0 0 0 1px #8a6a00}
+.m-item .val{color:#79d0ff; font-weight:700}
+.m-item.sel{background:linear-gradient(90deg,#3a2b00,#6b4a00); color:#fff;
+  box-shadow:inset 0 0 0 1px #a37c00}
 .m-item.sel .lbl:before{content:"\25B8 "; color:var(--neon)}
 .m-item.sel .val{color:#ffe08a}
 .m-item.dis{opacity:.42}
 .m-item.on .val{color:#7cf29a}
-.m-gap{height:7px}
-.m-note{color:#8d97b3; font-size:9px; margin-top:9px; border-top:1px dashed #39425a; padding-top:6px; white-space:pre-wrap}
-.m-foot{color:#5f6a86; font-size:9px; text-align:center; margin-top:8px}
-kbd{background:#1b2130; border:1px solid #333d54; border-bottom-width:2px; border-radius:3px; padding:0 3px; color:#cfe}
-#kb{display:grid; grid-template-columns:repeat(10,1fr); gap:3px; margin:8px 0}
-#kb div{background:#161b27; border:1px solid #2b3346; border-radius:3px; text-align:center; padding:3px 0; font-size:11px}
-#kb div.sel{background:#5b3f00; border-color:#a37c00; color:#fff}
+.m-gap{height:calc(var(--u)*3.5)}
+.m-note{color:#8d97b3; font-size:calc(var(--u)*4.4); margin-top:calc(var(--u)*4);
+  border-top:1px dashed #39425a; padding-top:calc(var(--u)*3); white-space:pre-wrap; line-height:1.5}
+.m-foot{color:#5f6a86; font-size:calc(var(--u)*4.4); text-align:center; margin-top:calc(var(--u)*4)}
+#kb{display:grid; grid-template-columns:repeat(10,1fr); gap:calc(var(--u)*1.4); margin:calc(var(--u)*4) 0}
+#kb div{background:#161b27; border:1px solid #2b3346; border-radius:calc(var(--u)*1.5);
+  text-align:center; padding:calc(var(--u)*1.6) 0; font-weight:700}
+#kb div.sel{background:#6b4a00; border-color:#ffc83d; color:#fff; box-shadow:0 0 calc(var(--u)*3) rgba(255,190,0,.5)}
 #code{
-  text-align:center; font-size:16px; letter-spacing:.3em; color:var(--neon);
-  background:#0a0d15; border:1px solid #333d54; border-radius:4px; padding:5px; margin:6px 0; min-height:26px;
+  text-align:center; font-size:calc(var(--u)*8); letter-spacing:.34em; font-weight:800; color:var(--neon);
+  background:#0a0d15; border:1px solid #333d54; border-radius:calc(var(--u)*2);
+  padding:calc(var(--u)*2.5); margin:calc(var(--u)*3) 0; min-height:calc(var(--u)*13);
+  text-shadow:0 0 calc(var(--u)*4) rgba(255,190,0,.5);
 }
-#hint{color:#66708c; font-size:10px; letter-spacing:.06em; text-align:center; max-width:420px}
-#hint b{color:#a9b6d4}
 #touch{position:absolute; inset:0; z-index:8; display:none}
 #touch.on{display:block}
 .tbtn{
   position:absolute; background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.22);
-  border-radius:50%; color:#fff; font-size:13px; display:flex; align-items:center; justify-content:center;
+  border-radius:50%; color:#fff; font-size:calc(var(--u)*7); display:flex;
+  align-items:center; justify-content:center;
 }
 .tbtn:active,.tbtn.hit{background:rgba(255,200,0,.35)}
-#flash{position:absolute; inset:0; z-index:7; pointer-events:none; background:#fff; opacity:0}
 </style>
 
 <div id="cab">
-  <div id="marquee">KARRIERELEITER</div>
-  <div id="screenwrap">
-    <canvas id="game" width="224" height="272"></canvas>
-    <div id="flash"></div>
-    <div id="scanlines"></div>
-    <div id="vignette"></div>
-    <div id="touch"></div>
-    <div id="overlay"></div>
+  <div class="cab-marquee"><span>KARRIERELEITER</span></div>
+  <div class="cab-vents"></div>
+  <div class="cab-bezel">
+    <div id="screenwrap">
+      <canvas id="game" width="224" height="272"></canvas>
+      <div id="flash"></div>
+      <div id="scanlines"></div>
+      <div id="glare"></div>
+      <div id="touch"></div>
+      <div id="overlay"></div>
+    </div>
   </div>
-  <div id="hint"><b>&larr;&rarr;</b> laufen &nbsp; <b>&uarr;&darr;</b> Leiter &nbsp; <b>Leertaste</b> Springen &nbsp; <b>Enter</b> Start &nbsp; <b>P/Esc</b> Pause &nbsp; <b>F1</b> Cheats &nbsp; <b>F2</b> Optionen &nbsp; &#127918; Gamepad wird automatisch erkannt</div>
+  <div class="cab-panel">
+    <div class="joy">
+      <div class="plate"></div><div class="shaft"></div><div class="ball" id="joyball"></div>
+    </div>
+    <div class="panel-label">1 PLAYER</div>
+    <div class="btns"><div class="bt b1" id="btA">A</div><div class="bt b2" id="btB">B</div></div>
+  </div>
+  <div class="cab-coin">
+    <div class="slot"></div>
+    <div class="coin-label">INSERT COIN &nbsp;·&nbsp; 1 COIN 1 PLAY</div>
+    <div class="slot"></div>
+  </div>
 </div>
 
 <script>
@@ -120,7 +273,7 @@ const aabb  = (a,b) => a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.
 /* ------------------------------------------------------- Einstellungen */
 const DEFAULTS = {
   volMaster:0.7, music:true, sfx:true,
-  scanlines:true, shake:true, scale:0, flashFx:true,
+  scanlines:true, shake:true, scale:0, flashFx:true, cabinet:true,
   difficulty:1,           // 0 Praktikant, 1 Normal, 2 Manager, 3 Burnout
   startLives:3,
   deadzone:0.35, rumble:true,
@@ -550,7 +703,8 @@ function spawnPlayer(){
   const gp = L.plats[0];
   P_ = { x:L.start.x, y:0, w:11, h:16, vx:0, vy:0, dir:1, plat:null, lad:null,
          onLad:false, jump:false, anim:0, hammer:0, hamSide:0, alive:true, dieT:0,
-         win:0, climbAnim:0, air:0, lastFeet:0, scale:1, jumpScored:new Set() };
+         win:0, climbAnim:0, air:0, lastFeet:0, scale:1, jumpScored:new Set(),
+         jumpBuf:0, coyote:0 };
   P_.y = surfaceY(gp, P_.x) - P_.h;
   P_.plat = gp; P_.lastFeet = P_.y+P_.h;
 }
@@ -569,15 +723,17 @@ function landing(x, feetPrev, feetNow){
   }
   return best;
 }
-// mode: 'up' = am Fuß einsteigen, 'down' = oben einsteigen, 'grab' = mittendrin
-function findLadder(cx, feet, mode){
-  let best=null, bd=99;
+// mode: 'up' = am Fuss einsteigen, 'down' = oben einsteigen, 'grab' = mittendrin
+const LAD_GRAB = 11;   // wie weit seitlich man eine Leiter noch erwischt
+const LAD_HELP = 26;   // ab hier rutscht man beim Halten von Hoch/Runter hin
+function findLadder(cx, feet, mode, maxDX=LAD_GRAB){
+  let best=null, bd=999;
   for(const l of L.lads){
     const d = Math.abs(cx - l.x);
-    if(d > 6) continue;
+    if(d > maxDX) continue;
     let ok=false;
-    if(mode==='up')        ok = Math.abs(feet-l.yBot)<5 && feet > ladLimit(l)+2;
-    else if(mode==='down') ok = Math.abs(feet-l.yTop)<5 && !l.broken;
+    if(mode==='up')        ok = Math.abs(feet-l.yBot)<7 && feet > ladLimit(l)+2;
+    else if(mode==='down') ok = Math.abs(feet-l.yTop)<7 && !l.broken;
     else                   ok = feet > l.yTop+1 && feet < l.yBot-1;
     if(ok && d < bd){ bd=d; best=l; }
   }
@@ -591,14 +747,14 @@ function updatePlayer(dt){
   const m = spdMul();
   let LEFT = IN.held.left, RIGHT = IN.held.right;
   if(kaosFx.invert){ const t=LEFT; LEFT=RIGHT; RIGHT=t; }
-  const walkSpeed = 0.95*m*(CHEAT.turbo?1.25:1);
+  const walkSpeed = 1.02*m*(CHEAT.turbo?1.25:1);
 
   // --- Leiter ----------------------------------------------------------
   if(p.onLad){
     const l = p.lad, lim = ladLimit(l);
     let mv = 0;
-    if(IN.held.up)   mv = -0.72*m;
-    if(IN.held.down) mv =  0.72*m;
+    if(IN.held.up)   mv = -0.80*m;
+    if(IN.held.down) mv =  0.80*m;
     p.y += mv;
     p.climbAnim += Math.abs(mv)*0.55;
     if(mv && (G.frame%9===0)) SFX.climb();
@@ -621,22 +777,29 @@ function updatePlayer(dt){
   }
 
   // --- Boden / Luft ----------------------------------------------------
+  // Sprungpuffer (kurz vor der Landung gedrückt zählt) und Kojotenzeit
+  // (kurz nach dem Verlassen der Kante darf man noch springen)
+  if(IN.hit.jump) p.jumpBuf = 9;
+  if(p.jumpBuf>0) p.jumpBuf--;
   const grounded = !!p.plat;
+  if(grounded) p.coyote = 7; else if(p.coyote>0) p.coyote--;
+  const mayJump = (grounded || (p.coyote>0 && p.vy>=0)) && p.jumpBuf>0;
   if(grounded){
     p.vx = 0;
     if(LEFT){ p.vx=-walkSpeed; p.dir=-1; }
     if(RIGHT){ p.vx= walkSpeed; p.dir= 1; }
     if(p.plat.conv) p.vx += p.plat.conv*0.42*m;
-    if(IN.hit.jump){
-      p.vy = -3.15*Math.sqrt(gravMul()); p.plat=null; p.jump=true; p.air=0; SFX.jump();
-      p.jumpScored = new Set();
-    }
   } else {
     if(LEFT){ p.vx=-walkSpeed; p.dir=-1; }
     else if(RIGHT){ p.vx= walkSpeed; p.dir= 1; }
     p.vy += 0.215*gravMul();
     if(p.vy>4.2) p.vy=4.2;
     p.air++;
+  }
+  if(mayJump){
+    p.vy = -3.15*Math.sqrt(gravMul());
+    p.plat=null; p.jump=true; p.air=0; p.jumpBuf=0; p.coyote=0;
+    p.jumpScored = new Set(); SFX.jump();
   }
   const feetPrev = p.y+p.h;
   p.x += p.vx;
@@ -658,12 +821,22 @@ function updatePlayer(dt){
   // --- Leiter greifen ---------------------------------------------------
   if(p.hammer<=0){
     const feetNow = p.y+p.h;
+    const steering = LEFT||RIGHT;
     if(IN.held.up){
       const l = (p.plat ? findLadder(cx,feetNow,'up') : null) || findLadder(cx,feetNow,'grab');
-      if(l && feetNow > ladLimit(l)+2){ p.onLad=true; p.lad=l; p.plat=null; p.vy=0; }
+      if(l && feetNow > ladLimit(l)+2){ p.onLad=true; p.lad=l; p.plat=null; p.vy=0; p.x=l.x-p.w/2; }
+      else if(p.plat && !steering){
+        // Einstieghilfe: wer Hoch hält, rutscht sanft zur nächsten Leiter
+        const n = findLadder(cx,feetNow,'up',LAD_HELP);
+        if(n){ const d=Math.sign(n.x-cx); p.x += d*0.6; p.dir = d||p.dir; }
+      }
     } else if(IN.held.down && p.plat){
       const l = findLadder(cx,feetNow,'down');
-      if(l){ p.onLad=true; p.lad=l; p.plat=null; p.vy=0; p.y = l.yTop-p.h+3; }
+      if(l){ p.onLad=true; p.lad=l; p.plat=null; p.vy=0; p.x=l.x-p.w/2; p.y = l.yTop-p.h+3; }
+      else if(!steering){
+        const n = findLadder(cx,feetNow,'down',LAD_HELP);
+        if(n){ const d=Math.sign(n.x-cx); p.x += d*0.6; p.dir = d||p.dir; }
+      }
     }
   }
   if(p.y > PH+20){ killPlayer('sturz'); }
@@ -934,12 +1107,126 @@ const buf = document.createElement('canvas'); buf.width=CW; buf.height=CH;
 const b = buf.getContext('2d',{alpha:false}); b.imageSmoothingEnabled=false;
 
 function px(x,y,w,h,c){ b.fillStyle=c; b.fillRect(x|0,y|0,w|0,h|0); }
+
+/* ---------------------------------------------------------------------
+   Arcade-Bitmapschrift, 5x7 Pixel pro Zeichen (echte Pixel, kein Antialias).
+   Jeder Text wird einmal in einen Zwischenpuffer gerendert und gecacht.
+   ------------------------------------------------------------------- */
+const FONT = {};
+(function(){
+  const D = {
+    A:'.XXX.|X...X|X...X|XXXXX|X...X|X...X|X...X',
+    B:'XXXX.|X...X|X...X|XXXX.|X...X|X...X|XXXX.',
+    C:'.XXX.|X...X|X....|X....|X....|X...X|.XXX.',
+    D:'XXXX.|X...X|X...X|X...X|X...X|X...X|XXXX.',
+    E:'XXXXX|X....|X....|XXXX.|X....|X....|XXXXX',
+    F:'XXXXX|X....|X....|XXXX.|X....|X....|X....',
+    G:'.XXX.|X...X|X....|X.XXX|X...X|X...X|.XXX.',
+    H:'X...X|X...X|X...X|XXXXX|X...X|X...X|X...X',
+    I:'.XXX.|..X..|..X..|..X..|..X..|..X..|.XXX.',
+    J:'..XXX|...X.|...X.|...X.|...X.|X..X.|.XX..',
+    K:'X...X|X..X.|X.X..|XX...|X.X..|X..X.|X...X',
+    L:'X....|X....|X....|X....|X....|X....|XXXXX',
+    M:'X...X|XX.XX|X.X.X|X...X|X...X|X...X|X...X',
+    N:'X...X|XX..X|X.X.X|X..XX|X...X|X...X|X...X',
+    O:'.XXX.|X...X|X...X|X...X|X...X|X...X|.XXX.',
+    P:'XXXX.|X...X|X...X|XXXX.|X....|X....|X....',
+    Q:'.XXX.|X...X|X...X|X...X|X.X.X|X..X.|.XX.X',
+    R:'XXXX.|X...X|X...X|XXXX.|X.X..|X..X.|X...X',
+    S:'.XXXX|X....|X....|.XXX.|....X|....X|XXXX.',
+    T:'XXXXX|..X..|..X..|..X..|..X..|..X..|..X..',
+    U:'X...X|X...X|X...X|X...X|X...X|X...X|.XXX.',
+    V:'X...X|X...X|X...X|X...X|X...X|.X.X.|..X..',
+    W:'X...X|X...X|X...X|X.X.X|X.X.X|XX.XX|X...X',
+    X:'X...X|X...X|.X.X.|..X..|.X.X.|X...X|X...X',
+    Y:'X...X|X...X|.X.X.|..X..|..X..|..X..|..X..',
+    Z:'XXXXX|....X|...X.|..X..|.X...|X....|XXXXX',
+    '0':'.XXX.|X...X|X..XX|X.X.X|XX..X|X...X|.XXX.',
+    '1':'..X..|.XX..|..X..|..X..|..X..|..X..|.XXX.',
+    '2':'.XXX.|X...X|....X|...X.|..X..|.X...|XXXXX',
+    '3':'XXXXX|...X.|..X..|...X.|....X|X...X|.XXX.',
+    '4':'...X.|..XX.|.X.X.|X..X.|XXXXX|...X.|...X.',
+    '5':'XXXXX|X....|XXXX.|....X|....X|X...X|.XXX.',
+    '6':'..XX.|.X...|X....|XXXX.|X...X|X...X|.XXX.',
+    '7':'XXXXX|....X|...X.|..X..|.X...|.X...|.X...',
+    '8':'.XXX.|X...X|X...X|.XXX.|X...X|X...X|.XXX.',
+    '9':'.XXX.|X...X|X...X|.XXXX|....X|...X.|.XX..',
+    ' ':'.....|.....|.....|.....|.....|.....|.....',
+    '.':'.....|.....|.....|.....|.....|.XX..|.XX..',
+    ',':'.....|.....|.....|.....|.XX..|.XX..|X....',
+    ':':'.....|.XX..|.XX..|.....|.XX..|.XX..|.....',
+    ';':'.....|.XX..|.XX..|.....|.XX..|.XX..|X....',
+    '!':'..X..|..X..|..X..|..X..|..X..|.....|..X..',
+    '?':'.XXX.|X...X|....X|..XX.|..X..|.....|..X..',
+    '-':'.....|.....|.....|XXXXX|.....|.....|.....',
+    '_':'.....|.....|.....|.....|.....|.....|XXXXX',
+    '+':'.....|..X..|..X..|XXXXX|..X..|..X..|.....',
+    '=':'.....|.....|XXXXX|.....|XXXXX|.....|.....',
+    '/':'....X|....X|...X.|..X..|.X...|X....|X....',
+    '(':'...X.|..X..|.X...|.X...|.X...|..X..|...X.',
+    ')':'.X...|..X..|...X.|...X.|...X.|..X..|.X...',
+    '%':'XX..X|XX.X.|..X..|.X...|X.XX.|..XX.|.....',
+    "'":'..X..|..X..|.....|.....|.....|.....|.....',
+    '*':'.....|X.X.X|.XXX.|XXXXX|.XXX.|X.X.X|.....',
+    '<':'...X.|..X..|.X...|X....|.X...|..X..|...X.',
+    '>':'.X...|..X..|...X.|....X|...X.|..X..|.X...',
+    ARROW_L:'.....|..X..|.X...|XXXXX|.X...|..X..|.....',
+    ARROW_R:'.....|..X..|...X.|XXXXX|...X.|..X..|.....',
+    ARROW_U:'..X..|.XXX.|X.X.X|..X..|..X..|..X..|.....',
+    ARROW_D:'.....|..X..|..X..|..X..|X.X.X|.XXX.|..X..',
+    DOT_MID:'.....|.....|.....|.XX..|.XX..|.....|.....',
+  };
+  const ren = {ARROW_L:'←', ARROW_R:'→', ARROW_U:'↑', ARROW_D:'↓', DOT_MID:'·'};
+  for(const k in D) FONT[ren[k]||k] = D[k].split('|');
+})();
+const UMLAUT = { 'Ä':'A', 'Ö':'O', 'Ü':'U' };
+const GW = 5, GH = 7, GADV = 6, GTOP = 2;      // Zellmasse
+const textCache = new Map();
+
+function textScale(size){ return size<=9 ? 1 : size<=13 ? 2 : size<=19 ? 3 : 4; }
+function textWidth(str, size){ const sc=textScale(size); return String(str).length*GADV*sc - sc; }
+
+function renderText(str, col, sc){
+  const key = str+' '+col+' '+sc;
+  const hit = textCache.get(key); if(hit) return hit;
+  const chars=[...str];
+  const cv = document.createElement('canvas');
+  cv.width  = Math.max(1, chars.length*GADV*sc);
+  cv.height = (GH+GTOP)*sc;
+  const g = cv.getContext('2d');
+  g.fillStyle = col;
+  chars.forEach((ch,i)=>{
+    const base = UMLAUT[ch];
+    const rows = FONT[base||ch];
+    if(!rows) return;
+    const ox = i*GADV*sc;
+    for(let y=0;y<GH;y++){
+      const r = rows[y];
+      let run=0;
+      for(let x=0;x<=GW;x++){
+        const on = x<GW && r[x]==='X';
+        if(on) run++;
+        else if(run){ g.fillRect(ox+(x-run)*sc, (y+GTOP)*sc, run*sc, sc); run=0; }
+      }
+    }
+    if(base){ g.fillRect(ox+sc, 0, sc, sc); g.fillRect(ox+3*sc, 0, sc, sc); }
+  });
+  if(textCache.size>500) textCache.clear();
+  textCache.set(key, cv);
+  return cv;
+}
 function text(s,x,y,c='#fff',align='left',size=8){
-  b.font = 'bold '+size+'px "Courier New",ui-monospace,monospace';
-  b.textAlign=align; b.textBaseline='top'; b.fillStyle=c; b.fillText(s,x|0,y|0);
+  s = String(s).toUpperCase();
+  const sc = textScale(size), w = s.length*GADV*sc - sc;
+  let px0 = x;
+  if(align==='center') px0 = x - w/2;
+  else if(align==='right') px0 = x - w;
+  b.drawImage(renderText(s,c,sc), Math.round(px0), Math.round(y-GTOP*sc));
 }
 function textS(s,x,y,c,align='left',size=8,sh='#000'){
-  text(s,x+1,y+1,sh,align,size); text(s,x,y,c,align,size);
+  const sc = textScale(size);
+  text(s,x+sc,y+sc,sh,align,size);
+  text(s,x,y,c,align,size);
 }
 const STYLE = {
   office:{ bg:'#080a1c', plat:'#e2503c', platEdge:'#ff8f78', lad:'#57d9ff', deco:'win' },
@@ -1030,21 +1317,34 @@ function drawPlats(){
     }
   }
 }
+function nearLadder(l){
+  if(!P_||!P_.alive||P_.hammer>0) return false;
+  const cx=P_.x+P_.w/2, feet=P_.y+P_.h;
+  return Math.abs(cx-l.x)<=LAD_GRAB+2 && feet>=l.yTop-10 && feet<=l.yBot+6;
+}
 function drawLads(){
   const st = stylePal();
   for(const l of L.lads){
+    const hot = nearLadder(l);
+    const col = hot ? '#ffffff' : st.lad;
     const lim = ladLimit(l);
-    const drawRung=(y)=>{ px(l.x-4,y,9,1,st.lad); };
+    const drawRung=(y)=>{ px(l.x-4,y,9,1,col); };
     const top = l.broken? lim : l.yTop;
-    px(l.x-5,top-2,2,(l.yBot-top)+2, st.lad);
-    px(l.x+4,top-2,2,(l.yBot-top)+2, st.lad);
+    px(l.x-5,top-2,2,(l.yBot-top)+2, col);
+    px(l.x+4,top-2,2,(l.yBot-top)+2, col);
     for(let y=l.yBot-4;y>top;y-=5) drawRung(y);
     if(l.broken){
-      px(l.x-5,l.yTop-2,2,(lim-l.yTop)-6, st.lad);
-      px(l.x+4,l.yTop-2,2,(lim-l.yTop)-6, st.lad);
+      px(l.x-5,l.yTop-2,2,(lim-l.yTop)-6, col);
+      px(l.x+4,l.yTop-2,2,(lim-l.yTop)-6, col);
       for(let y=l.yTop+2;y<lim-8;y+=5) drawRung(y);
       px(l.x-6,lim-6,12,1,'#ff4a4a');
     }
+  }
+  // Blinkender Pfeil, wenn man direkt am Leiterfuss steht
+  if(P_ && P_.alive && P_.plat && P_.hammer<=0 && (G.frame%40)<24){
+    const cx=P_.x+P_.w/2, feet=P_.y+P_.h;
+    const l = findLadder(cx, feet, 'up');
+    if(l) text('↑', l.x, P_.y-11, '#ffe14d', 'center', 8);
   }
 }
 /* -------------------------------------------------------------- Held */
@@ -1128,13 +1428,17 @@ function drawChef(){
   b.restore();
   if(c.type==='thrower'||c.type==='boss'){
     // ordentlich gestapelte Kaffeetassen als Munitionsvorrat
-    for(let i=0;i<3;i++) drawCup(c.x+22+i*11, c.y-11, 0, false, 0.9);
-    for(let i=0;i<2;i++) drawCup(c.x+27+i*11, c.y-20, 0, false, 0.9);
+    for(let i=0;i<3;i++) drawCup(c.x+22+i*12, c.y-11, 0, false);
+    for(let i=0;i<2;i++) drawCup(c.x+28+i*12, c.y-22, 0, false);
   }
 }
 /* ------------------------------------------------------------ Gegner */
 function drawCup(x,y,rot,wild,s=1){
-  b.save(); b.translate(x+5,y+5); b.rotate(rot); b.scale(s,s); b.translate(-5,-5);
+  // Drehung auf 8 Stufen rasten – so bleibt das Pixelbild sauber
+  const q = Math.round(rot/(Math.PI/4))*(Math.PI/4);
+  b.save(); b.translate(Math.round(x)+5,Math.round(y)+5); b.rotate(q);
+  if(s!==1) b.scale(s,s);
+  b.translate(-5,-5);
   if(wild){
     px(0,0,11,11,'#1f7a3d'); px(1,1,9,9,'#eafff0');
     for(let i=1;i<10;i+=3) px(1,i,9,1,'#1f7a3d');
@@ -1424,33 +1728,35 @@ const nameEntry = {
 function drawTitle(){
   px(0,0,CW,CH,'#05060f');
   const t=G.frame;
-  for(let i=0;i<50;i++){ const x=(i*47)%CW, y=(i*83+((t/3)|0))%CH; px(x,y,1,1,'#141c3a'); }
-  for(let i=0;i<7;i++){
-    const y=CH-30-i*22, d=i%2?1:-1;
-    px(d>0?10:34, y, 180, 3, '#e2503c'); px(d>0?10:34, y, 180, 1, '#ff8f78');
-  }
-  b.save(); b.globalAlpha=0.9;
-  textS('KARRIERE', CW/2, 34, '#ffd23d','center',22);
-  textS('LEITER',   CW/2, 58, '#ff8f3d','center',22);
-  b.restore();
-  textS('ein Büro-Aufstieg in 4 Etagen', CW/2, 84, '#8f9ab8','center',7);
-  drawCup(30, 120+Math.sin(t*0.05)*3, t*0.06, false, 1.4);
-  drawCup(180, 150+Math.cos(t*0.05)*3, -t*0.06, true, 1.4);
-  const y0=112;
-  textS('© 1981 KERSEX INDUSTRIES', CW/2, CH-22,'#5f6a86','center',7);
-  if((t%60)<40) textS('START DRÜCKEN', CW/2, CH-52, '#fff','center',10);
-  textS('ENTER  /  GAMEPAD  A', CW/2, CH-38, '#8f9ab8','center',7);
-  textS(IN.padIndex>=0? '\u{1F3AE} '+IN.padName : 'F1 CHEATS   F2 OPTIONEN', CW/2, y0+52,'#57d9ff','center',7);
-  // Leiter + kletternder Held im Titelbild
-  for(let y=CH-40; y>CH-200; y-=5) px(108,y,9,1,'#57d9ff');
-  px(107,CH-200,2,160,'#57d9ff'); px(116,CH-200,2,160,'#57d9ff');
-  const climbY = CH-46 - ((t*0.35)%150);
-  b.save(); b.translate(112, climbY);
-  px(-5,-16,11,16,'#00000000');
-  px(-4,-11,3,5,'#2b4bd6'); px(2,-11,3,5,'#2b4bd6');
+  for(let i=0;i<60;i++){ const x=(i*47)%CW, y=(i*83+((t/4)|0))%CH; px(x,y,1,1,'#161e42'); }
+  // Kulisse: zwei Rampen im freien Mittelstreifen
+  px(6,140,184,3,'#7d2a22');  px(6,140,184,1,'#b8493a');
+  px(34,182,184,3,'#7d2a22'); px(34,182,184,1,'#b8493a');
+  // Leiter, an der der Held hochklettert
+  const lx=112, lTop=140, lBot=182;
+  px(lx-6,lTop,2,lBot-lTop,'#2f7fa0'); px(lx+5,lTop,2,lBot-lTop,'#2f7fa0');
+  for(let y=lBot-4;y>lTop;y-=6) px(lx-5,y,11,1,'#2f7fa0');
+  const climbY = lBot - ((t*0.32)%(lBot-lTop));
+  b.save(); b.translate(lx, climbY);
+  const sw=(Math.floor(t/10)%2)?1:0;
+  px(-4+sw,-11,3,5,'#2b4bd6'); px(1-sw,-11,3,5,'#2b4bd6');
   px(-4,-16,9,6,'#f2f5ff'); px(-1,-16,2,5,'#e2352b');
-  px(-3,-21,6,5,'#f5c99b'); px(-4,-21,8,2,'#3a2a1c');
+  px(-3,-21,6,5,'#f5c99b'); px(-4,-22,8,2,'#3a2a1c');
+  px(-6,-19+sw*2,2,4,'#f5c99b'); px(4,-19+(1-sw)*2,2,4,'#f5c99b');
   b.restore();
+  // rollende Tassen als Deko
+  drawCup(((t*0.6)%210)|0, 129, t*0.06, false);
+  drawCup(200-(((t*0.5)%210)|0), 171, -t*0.06, true);
+  // Logo
+  textS('KARRIERE', CW/2, 26, '#ffd23d','center',22,'#7a3d00');
+  textS('LEITER',   CW/2, 60, '#ff8f3d','center',22,'#7a1c00');
+  textS('EIN BÜRO-AUFSTIEG IN 4 ETAGEN', CW/2, 96, '#7f8aa6','center',8);
+  // Fußzeile
+  if((t%60)<40) textS('START DRÜCKEN', CW/2, 208, '#ffffff','center',12);
+  textS('ENTER  /  GAMEPAD A', CW/2, 230, '#8f9ab8','center',8);
+  textS(IN.padIndex>=0? 'PAD '+IN.padName.slice(0,16) : 'F1 CHEATS   F2 OPTIONEN',
+        CW/2, 244, '#57d9ff','center',8);
+  textS('(C) 1981 KERSEX INDUSTRIES', CW/2, 258,'#5f6a86','center',8);
 }
 function drawScores(){
   px(0,0,CW,CH,'#05060f');
@@ -1468,20 +1774,22 @@ function drawScores(){
 function drawHowHigh(){
   px(0,0,CW,CH,'#000');
   const m = L.meters;
-  textS('WIE HOCH KOMMST DU?', CW/2, 34,'#57d9ff','center',10);
-  textS('ETAGE '+(G.stage%4+1)+' — '+L.name, CW/2, 52,'#ffd23d','center',8);
+  textS('WIE HOCH KOMMST DU', CW/2, 30,'#57d9ff','center',12);
+  textS('ETAGE '+(G.stage%4+1)+' - '+L.name, CW/2, 52,'#ffd23d','center',8);
   for(let i=0;i<4;i++){
-    const y=CH-70-i*26, on = (i<=G.stage%4);
-    px(60,y,104,4, on?'#e2503c':'#3a2018'); px(60,y,104,1,on?'#ff8f78':'#4a2a20');
-    textS(((i+1)*25)+'m', 46, y-4, on?'#ffd23d':'#4a5168','right',8);
+    const y=CH-74-i*28, on = (i<=G.stage%4);
+    px(58,y,110,4, on?'#e2503c':'#3a2018'); px(58,y,110,1,on?'#ff8f78':'#4a2a20');
+    textS(((i+1)*25)+'M', 50, y-4, on?'#ffd23d':'#4a5168','right',8);
     if(i===G.stage%4){
-      px(150,y-16,11,16,'#00000000');
-      px(151,y-6,3,5,'#2b4bd6'); px(157,y-6,3,5,'#2b4bd6');
-      px(151,y-11,9,6,'#f2f5ff'); px(154,y-11,2,5,'#e2352b');
-      px(152,y-16,6,5,'#f5c99b');
+      const hx=142, hy=y-16, sw=(Math.floor(G.frame/12)%2)?1:0;
+      px(hx+1+sw,hy+11,3,5,'#2b4bd6'); px(hx+6-sw,hy+11,3,5,'#2b4bd6');
+      px(hx+1,hy+15,3,1,'#141414'); px(hx+6,hy+15,3,1,'#141414');
+      px(hx+2,hy+5,7,7,'#f2f5ff'); px(hx+5,hy+5,2,6,'#e2352b');
+      px(hx,hy+6,2,4,'#f5c99b'); px(hx+9,hy+6,2,4,'#f5c99b');
+      px(hx+3,hy,6,5,'#f5c99b'); px(hx+2,hy,8,2,'#3a2a1c');
     }
   }
-  textS('RUNDE '+G.loop+'   ·   '+DIFF[S.difficulty].name, CW/2, CH-28,'#8f9ab8','center',7);
+  textS('RUNDE '+G.loop+'  -  '+DIFF[S.difficulty].name, CW/2, CH-26,'#8f9ab8','center',8);
 }
 function drawGameOver(){
   b.globalAlpha=0.72; px(0,0,CW,CH,'#000'); b.globalAlpha=1;
@@ -1489,7 +1797,7 @@ function drawGameOver(){
   textS('KARRIERE BEENDET', CW/2, CH/2-12,'#fff','center',9);
   textS('PUNKTE '+G.score, CW/2, CH/2+6,'#ffd23d','center',9);
   textS('TITEL: '+careerTitle(G.score), CW/2, CH/2+20,'#8f9ab8','center',8);
-  if(CHEAT.used) textS('(mit Cheats – nicht gewertet)', CW/2, CH/2+34,'#ff7a3d','center',7);
+  if(CHEAT.used) textS('(MIT CHEATS - NICHT GEWERTET)', CW/2, CH/2+34,'#ff7a3d','center',7);
 }
 function drawNameEntry(){
   px(0,0,CW,CH,'#05060f');
@@ -1501,7 +1809,7 @@ function drawNameEntry(){
     textS(nameEntry.chars[i], x, 108, sel?'#ffd23d':'#fff','center',18);
     if(sel && (G.frame%40)<24) px(x-8,132,16,2,'#ffd23d');
   }
-  textS('↑↓ Buchstabe   ←→ Position   START = OK', CW/2, 160,'#5f6a86','center',7);
+  textS('↑↓ BUCHSTABE  ←→ STELLE  START=OK', CW/2, 160,'#5f6a86','center',7);
 }
 function drawPlayOverlays(){
   if(G.state==='clear'){
@@ -1602,6 +1910,7 @@ const settingsMenu = {
     {label:'CRT-Scanlines', val:()=>onOff(S.scanlines), act:()=>{S.scanlines=!S.scanlines; applyVideo();}},
     {label:'Bildschirmbeben',val:()=>onOff(S.shake), act:()=>{S.shake=!S.shake;}},
     {label:'Trefferblitze', val:()=>onOff(S.flashFx), act:()=>{S.flashFx=!S.flashFx;}},
+    {label:'Automat anzeigen',val:()=>onOff(S.cabinet!==false), act:()=>{S.cabinet=!(S.cabinet!==false); resize();}},
     {label:'Zoom',          val:()=>S.scale===0?'AUTO':S.scale+'x', act:d=>{S.scale=cyc(S.scale,6,d); resize();}},
     {label:'Vollbild',      val:()=>'▶', go:()=>toggleFullscreen()},
     {label:'FPS anzeigen',  val:()=>onOff(S.showFps), act:()=>{S.showFps=!S.showFps;}},
@@ -1791,14 +2100,33 @@ function checkKonami(){
 /*  HAUPTSCHLEIFE, SKALIERUNG, TOUCH                                     */
 /* ===================================================================== */
 const flashEl = document.getElementById('flash');
+const joyBall = document.getElementById('joyball');
+const btAEl = document.getElementById('btA'), btBEl = document.getElementById('btB');
+let joyLast = '';
+function animateCabinet(){
+  if(!joyBall) return;
+  const dx = (IN.held.right?1:0)-(IN.held.left?1:0);
+  const dy = (IN.held.down?1:0)-(IN.held.up?1:0);
+  const key = dx+','+dy+','+(IN.held.jump?1:0)+','+((IN.held.start||IN.held.pause)?1:0);
+  if(key===joyLast) return;
+  joyLast = key;
+  joyBall.style.transform = `translateX(-50%) translate(${dx*26}%, ${dy*20}%) rotate(${dx*10}deg)`;
+  btAEl.classList.toggle('on', IN.held.jump);
+  btBEl.classList.toggle('on', IN.held.start||IN.held.pause);
+}
 function applyVideo(){ document.body.classList.toggle('noscan', !S.scanlines); }
+/* Der Automat ist komplett in Einheiten der Bildschirmpixel gebaut:
+   --u entspricht genau einem hochskalierten Spielpixel.               */
+const CAB_W = 262, CAB_H = 448, BARE_W = 236, BARE_H = 290;
 function resize(){
-  const pad = 30;
-  const availW = innerWidth - pad, availH = innerHeight - 78;
-  let sc = S.scale>0 ? S.scale : Math.max(1, Math.floor(Math.min(availW/CW, availH/CH)));
-  if(S.scale>0) sc = S.scale;
+  const availW = innerWidth - 16, availH = innerHeight - 16;
+  const showCab = S.cabinet !== false;
+  document.body.classList.toggle('nocab', !showCab);
+  const uw = showCab? CAB_W : BARE_W, uh = showCab? CAB_H : BARE_H;
+  let sc = S.scale>0 ? S.scale
+         : Math.max(1, Math.floor(Math.min(availW/uw, availH/uh)));
+  document.documentElement.style.setProperty('--u', sc+'px');
   cvs.style.width = (CW*sc)+'px'; cvs.style.height = (CH*sc)+'px';
-  ov.style.fontSize = clamp(Math.round(5+sc*2.2),9,17)+'px';
 }
 addEventListener('resize', resize);
 function toggleFullscreen(){
@@ -1854,6 +2182,7 @@ function render(){
   ctx.fillStyle='#000'; ctx.fillRect(0,0,CW,CH);
   ctx.drawImage(buf, sx, sy);
   ctx.restore();
+  animateCabinet();
   if(G.flash>0){
     if(S.flashFx) flashEl.style.opacity = (G.flash*0.55).toFixed(2);
     G.flash -= 0.06; if(G.flash<0){G.flash=0; flashEl.style.opacity=0;}
