@@ -43,9 +43,11 @@ vollständig mit dem Controller bedienen.
 Maus oder Finger in alle Richtungen ziehen. Der Stick ist als SVG gebaut —
 Montageplatte, Staubkappe, Chromschaft und Kugel bewegen sich einzeln, eine
 gedämpfte Feder zieht ihn beim Loslassen mit leichtem Überschwingen zurück.
-Die Knöpfe **A** (springen) und **B** (Start) sind anklickbar. Tastatur,
-Controller und Gehäuse steuern dasselbe Spiel; der Stick zeigt immer die
-aktuelle Eingabe.
+Am Griff folgt er der Hand ohne Verzug, ein Achteck-Gatter begrenzt ihn wie
+eine echte Restriktorplatte, und bei jedem Richtungswechsel klickt ein
+Mikroschalter. Die Knöpfe **A** (springen) und **B** (Start) sind anklickbar.
+Tastatur, Controller und Gehäuse steuern dasselbe Spiel; der Stick zeigt immer
+die aktuelle Eingabe.
 
 **Klettern:** einfach ↑ gedrückt halten. Wer bis zu ~25 px neben einer heilen
 Leiter steht, rutscht automatisch hin und steigt ein; die erreichbare Leiter

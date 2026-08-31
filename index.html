@@ -249,33 +249,46 @@ body.noscan #scanlines,body.noscan #glare{display:none}
             <stop offset="0%" stop-color="#464e60"/><stop offset="62%" stop-color="#1b2029"/>
             <stop offset="100%" stop-color="#05070a"/>
           </radialGradient>
-          <linearGradient id="gShaft" gradientUnits="userSpaceOnUse" x1="42" y1="0" x2="58" y2="0">
+          <linearGradient id="gShaft" gradientUnits="userSpaceOnUse" x1="41" y1="0" x2="59" y2="0">
             <stop offset="0%"  stop-color="#20252f"/><stop offset="14%" stop-color="#6f7889"/>
             <stop offset="34%" stop-color="#eef1f7"/><stop offset="46%" stop-color="#ffffff"/>
             <stop offset="62%" stop-color="#aab2c2"/><stop offset="84%" stop-color="#4a5162"/>
             <stop offset="100%" stop-color="#1a1e26"/>
           </linearGradient>
-          <radialGradient id="gBall" cx="33%" cy="24%">
-            <stop offset="0%"  stop-color="#ffc0b0"/><stop offset="18%" stop-color="#fa7a68"/>
-            <stop offset="45%" stop-color="#e5382a"/><stop offset="74%" stop-color="#a8180e"/>
-            <stop offset="93%" stop-color="#6d0d06"/><stop offset="100%" stop-color="#8d1a10"/>
+          <radialGradient id="gBall" cx="33%" cy="24%" r="74%">
+            <stop offset="0%"  stop-color="#ff9e8c"/><stop offset="20%" stop-color="#f4614f"/>
+            <stop offset="46%" stop-color="#d92e1f"/><stop offset="74%" stop-color="#a5170e"/>
+            <stop offset="94%" stop-color="#6b0c05"/><stop offset="100%" stop-color="#83130a"/>
+          </radialGradient>
+          <!-- Licht, das vom Bedienfeld zurück auf die Kugelunterseite fällt.
+               Weicher Radialverlauf statt harter Ellipse - sonst sieht man die Kante. -->
+          <radialGradient id="gBounce" cx="50%" cy="90%" r="52%">
+            <stop offset="0%"  stop-color="#ff9d78" stop-opacity=".55"/>
+            <stop offset="55%" stop-color="#ff8a63" stop-opacity=".16"/>
+            <stop offset="100%" stop-color="#ff8a63" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="gGloss" cx="50%" cy="50%">
-            <stop offset="0%" stop-color="#fff" stop-opacity=".92"/>
-            <stop offset="60%" stop-color="#fff" stop-opacity=".22"/>
+            <stop offset="0%"  stop-color="#fff" stop-opacity=".95"/>
+            <stop offset="34%" stop-color="#fff" stop-opacity=".55"/>
+            <stop offset="70%" stop-color="#fff" stop-opacity=".14"/>
             <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
           </radialGradient>
-          <linearGradient id="gRim" gradientUnits="userSpaceOnUse" x1="0" y1="32" x2="0" y2="50">
-            <stop offset="0%" stop-color="#ff9a80" stop-opacity="0"/>
-            <stop offset="100%" stop-color="#ff8f70" stop-opacity=".55"/>
-          </linearGradient>
+          <radialGradient id="gOcc" cx="50%" cy="35%">
+            <stop offset="0%"  stop-color="#1a0503" stop-opacity=".55"/>
+            <stop offset="100%" stop-color="#1a0503" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="gDrop" cx="50%" cy="50%">
+            <stop offset="0%"  stop-color="#000" stop-opacity=".55"/>
+            <stop offset="65%" stop-color="#000" stop-opacity=".22"/>
+            <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
         </defs>
         <!-- Montageplatte im Bedienfeld -->
         <ellipse cx="50" cy="99" rx="33" ry="13" fill="url(#gPlate)"/>
         <ellipse cx="50" cy="99" rx="33" ry="13" fill="none" stroke="#828ca4" stroke-width="1.3" opacity=".8"/>
         <ellipse cx="50" cy="98" rx="24" ry="8.5" fill="#080b11"/>
         <circle cx="21" cy="99" r="2" fill="#98a1b6"/><circle cx="79" cy="99" r="2" fill="#98a1b6"/>
-        <ellipse id="jsShadow" cx="50" cy="97" rx="15" ry="5" fill="#000" opacity=".5"/>
+        <ellipse id="jsShadow" cx="50" cy="97" rx="19" ry="7" fill="url(#gDrop)"/>
         <!-- Staubkappe, kippt mit -->
         <g id="jsWasher">
           <ellipse cx="50" cy="88" rx="23" ry="9.5" fill="url(#gWash)"/>
@@ -285,12 +298,14 @@ body.noscan #scanlines,body.noscan #glare{display:none}
         <!-- Schaft -->
         <line id="jsShaft" x1="50" y1="88" x2="50" y2="38"
               stroke="url(#gShaft)" stroke-width="15" stroke-linecap="round"/>
-        <!-- Kugelgriff -->
+        <!-- Kugelgriff. Reihenfolge: Schattenwurf auf den Schaft, Grundkugel,
+             Bodenreflex, Glanzlicht mit hellem Kern. -->
         <g id="jsBall">
-          <circle cx="50" cy="30" r="22" fill="url(#gBall)"/>
-          <ellipse cx="50" cy="41" rx="17" ry="9" fill="url(#gRim)"/>
-          <ellipse cx="41" cy="20" rx="9.5" ry="7" fill="url(#gGloss)" transform="rotate(-24 41 20)"/>
-          <circle cx="58" cy="16" r="2.2" fill="#fff" opacity=".55"/>
+          <ellipse cx="50" cy="51" rx="9" ry="6" fill="url(#gOcc)"/>
+          <circle  cx="50" cy="30" r="22" fill="url(#gBall)"/>
+          <circle  cx="50" cy="30" r="22" fill="url(#gBounce)"/>
+          <ellipse cx="41" cy="20" rx="10" ry="7.2" fill="url(#gGloss)" transform="rotate(-26 41 20)"/>
+          <ellipse cx="40" cy="19" rx="3.4" ry="2.3" fill="#fff" opacity=".9" transform="rotate(-26 40 19)"/>
         </g>
       </svg>
     </div>
@@ -515,6 +530,8 @@ const SFX = {
   boss:      ()=>{ tone(90,0.30,{type:'sawtooth',vol:0.28,slide:45}); noise(0.3,0.2,200); },
   throwB:    ()=>{ tone(240,0.08,{type:'square',vol:0.16,slide:150}); },
   extralife: ()=>{ [659,784,988,1319].forEach((f,i)=>setTimeout(()=>tone(f,0.1,{vol:0.24}),i*70)); },
+  // trockener Mikroschalter-Klick des Sticks
+  stick:     ()=>{ noise(0.022,0.10,2400); tone(2100,0.010,{type:'square',vol:0.05}); },
 };
 
 /* Musik: winziger Sequenzer ------------------------------------------- */
@@ -531,7 +548,11 @@ const MUSIC = {
 let mus = { name:null, t:0, step:0, timer:null };
 function playMusic(name){
   if(mus.name===name) return;
-  stopMusic(); if(!AC||!S.music||!MUSIC[name]) { mus.name=name; return; }
+  stopMusic();
+  // Solange der Browser den Ton noch nicht freigegeben hat, nichts merken -
+  // sonst gilt das Stück als "läuft schon" und startet nie.
+  if(!AC){ mus.name=null; return; }
+  if(!S.music||!MUSIC[name]){ mus.name=name; return; }
   const m = MUSIC[name], lead=m.lead.split(/\s+/), bass=m.bass.split(/\s+/);
   const spb = 60/m.bpm/2*1000;
   mus.name = name; mus.step = 0;
@@ -1000,11 +1021,15 @@ function updateEnemies(dt){
     b.y = surfaceY(b.plat,b.x+b.w/2)-b.h;
   }
   for(const s of springs){
-    s.x += s.vx*m; s.phase += 0.16*m;
-    s.y = L.springs.y - 10 - Math.abs(Math.sin(s.phase))*22;
-    if(s.x > (L.springs.xEnd||172)){ s.falling = true; }
-    if(s.falling){ s.y += 3.0*m; s.x += 0.3; if(s.y>PH+10) s.dead=true; }
-    else if(s.x>PW+10) s.dead=true;
+    if(s.falling){
+      s.vy += 0.26*m; s.y += s.vy; s.x += 0.4*m;
+      if(s.y > PH+12 || s.x > PW+14) s.dead = true;
+    } else {
+      s.x += s.vx*m; s.phase += 0.16*m;
+      s.y = L.springs.y - 10 - Math.abs(Math.sin(s.phase))*22;
+      if(s.x > (L.springs.xEnd||172)){ s.falling = true; s.vy = 0; }
+      else if(s.x > PW+10) s.dead = true;
+    }
   }
   for(const f of flames){
     f.anim += 0.25;
@@ -1731,7 +1756,7 @@ function updateKaos(dt){
   if(kaosFx.rain && G.frame%12===0 && barrels.length<28){
     const x=rnd(PW-16,8);
     barrels.push({x,y:-12,w:11,h:11,plat:null,dir:pick([-1,1]),vy:0.5,
-                  wild:Math.random()<0.3,spin:0,scored:false});
+                  wild:Math.random()<0.3,spin:0,scored:false,lad:null,ladT:0,kind:'cup'});
   }
   if(kaosFx.confetti && G.frame%2===0){
     parts.push({x:rnd(PW), y:-4, vx:rnd(0.6,-0.6), vy:rnd(1.6,0.7),
@@ -2262,27 +2287,40 @@ const flashEl = document.getElementById('flash');
 const joyEl   = document.getElementById('joy');
 const jsBall   = document.getElementById('jsBall');
 const jsShaft  = document.getElementById('jsShaft');
+const jsShaftGrad = document.getElementById('gShaft');
 const jsWasher = document.getElementById('jsWasher');
 const jsShadow = document.getElementById('jsShadow');
 const btAEl   = document.getElementById('btA'), btBEl = document.getElementById('btB');
 
 /* ---- Joystick am Gehäuse: ziehbar, mit Federrückstellung ------------ */
-const JOY_DZ = 0.36;                       // Totzone bis eine Richtung zählt
+const JOY_DZ = 0.36;                       // Totzone bis eine Richtung schaltet
 let joyDrag = null;                        // {nx,ny} während des Ziehens
+let joySig  = '';                          // zuletzt geschaltete Richtungen
 const joyVis = { x:0, y:0, vx:0, vy:0 };   // gezeichnete Auslenkung (Feder)
 function joyDirs(nx, ny){
   touchHeld.left  = nx < -JOY_DZ;
   touchHeld.right = nx >  JOY_DZ;
   touchHeld.up    = ny < -JOY_DZ;
   touchHeld.down  = ny >  JOY_DZ;
+  // Bei jedem Richtungswechsel klickt ein Mikroschalter – wie am echten Stick.
+  const sig = (touchHeld.left?'L':'')+(touchHeld.right?'R':'')+
+              (touchHeld.up?'U':'')+(touchHeld.down?'D':'');
+  if(sig!==joySig){ joySig=sig; if(sig) SFX.stick(); }
+}
+/* Gatter: pro Achse auf 1 begrenzt, die Diagonale auf 1.2 – so erreicht man
+   die Ecken wie bei einer Achteck-Restriktorplatte, ohne dass der Griff
+   aus der Fassung läuft. */
+function joyGate(nx, ny){
+  nx = clamp(nx,-1,1); ny = clamp(ny,-1,1);
+  const len = Math.hypot(nx,ny);
+  if(len>1.2){ nx = nx/len*1.2; ny = ny/len*1.2; }
+  return [nx,ny];
 }
 function joyFromEvent(e){
   const r = joyEl.getBoundingClientRect();
   const rad = r.width*0.42;
-  let nx = (e.clientX-(r.left+r.width/2))/rad;
-  let ny = (e.clientY-(r.top +r.height*0.32))/rad;
-  const len = Math.hypot(nx,ny);
-  if(len>1){ nx/=len; ny/=len; }
+  const [nx,ny] = joyGate((e.clientX-(r.left+r.width/2))/rad,
+                          (e.clientY-(r.top +r.height*0.32))/rad);
   joyDrag = {nx,ny}; joyDirs(nx,ny);
 }
 if(joyEl){
@@ -2294,7 +2332,7 @@ if(joyEl){
   joyEl.addEventListener('pointermove', e=>{ if(joyDrag) joyFromEvent(e); });
   const stop = ()=>{
     if(!joyDrag) return;
-    joyDrag = null; joyEl.classList.remove('drag');
+    joyDrag = null; joyEl.classList.remove('drag'); joySig='';
     touchHeld.left=touchHeld.right=touchHeld.up=touchHeld.down=false;
   };
   joyEl.addEventListener('pointerup', stop);
@@ -2322,27 +2360,35 @@ hookCabButton(btBEl,'start');
 function animateCabinet(){
   if(!jsBall) return;
   let tx, ty;
-  if(joyDrag){ tx = joyDrag.nx; ty = joyDrag.ny; }
-  else {
-    tx = (IN.held.right?1:0)-(IN.held.left?1:0);
-    ty = (IN.held.down?1:0)-(IN.held.up?1:0);
-    const len = Math.hypot(tx,ty); if(len>1){ tx/=len; ty/=len; }
+  if(joyDrag){
+    // Am Griff hängt die Hand: der Stick folgt ohne Verzug.
+    tx = joyDrag.nx; ty = joyDrag.ny;
+    joyVis.x = tx; joyVis.y = ty; joyVis.vx = joyVis.vy = 0;
+  } else {
+    [tx,ty] = joyGate((IN.held.right?1:0)-(IN.held.left?1:0),
+                      (IN.held.down?1:0)-(IN.held.up?1:0));
+    // Losgelassen zieht die Feder zurück und schwingt kurz über die Mitte.
+    const k = 0.34, damp = 0.74;
+    joyVis.vx = (joyVis.vx + (tx-joyVis.x)*k)*damp;
+    joyVis.vy = (joyVis.vy + (ty-joyVis.y)*k)*damp;
+    joyVis.x += joyVis.vx; joyVis.y += joyVis.vy;
+    if(Math.abs(tx-joyVis.x)<0.002 && Math.abs(joyVis.vx)<0.002){ joyVis.x=tx; joyVis.vx=0; }
+    if(Math.abs(ty-joyVis.y)<0.002 && Math.abs(joyVis.vy)<0.002){ joyVis.y=ty; joyVis.vy=0; }
   }
-  const k = joyDrag? 0.55 : 0.34, damp = joyDrag? 0.55 : 0.74;
-  joyVis.vx = (joyVis.vx + (tx-joyVis.x)*k)*damp;
-  joyVis.vy = (joyVis.vy + (ty-joyVis.y)*k)*damp;
-  joyVis.x += joyVis.vx; joyVis.y += joyVis.vy;
-  if(Math.abs(joyVis.x)<0.0015 && Math.abs(joyVis.vx)<0.0015) { joyVis.x=tx?joyVis.x:0; joyVis.vx=0; }
-  if(Math.abs(joyVis.y)<0.0015 && Math.abs(joyVis.vy)<0.0015) { joyVis.y=ty?joyVis.y:0; joyVis.vy=0; }
-
-  const nx = clamp(joyVis.x,-1.15,1.15), ny = clamp(joyVis.y,-1.15,1.15);
+  const nx = clamp(joyVis.x,-1.25,1.25), ny = clamp(joyVis.y,-1.25,1.25);
   // Kugel läuft auf einer Kugelbahn, der Schaft folgt, die Staubkappe kippt mit
   const bdx = nx*25, bdy = ny*13;
   jsBall.setAttribute('transform',  `translate(${bdx.toFixed(2)},${bdy.toFixed(2)})`);
-  jsShaft.setAttribute('x2', (50+nx*18).toFixed(2));
-  jsShaft.setAttribute('y2', (38+ny*10).toFixed(2));
-  jsShaft.setAttribute('x1', (50+nx*4.5).toFixed(2));
-  jsShaft.setAttribute('y1', (88+ny*2).toFixed(2));
+  const sx1 = 50+nx*4.5, sy1 = 88+ny*2, sx2 = 50+nx*18, sy2 = 38+ny*10;
+  jsShaft.setAttribute('x1', sx1.toFixed(2));
+  jsShaft.setAttribute('y1', sy1.toFixed(2));
+  jsShaft.setAttribute('x2', sx2.toFixed(2));
+  jsShaft.setAttribute('y2', sy2.toFixed(2));
+  // Das Chromband muss mit dem Schaft kippen, sonst läuft der Verlauf seitlich
+  // aus ihm heraus und die Stange wird an einer Kante schwarz.
+  const ang = Math.atan2(sx2-sx1, sy1-sy2)*180/Math.PI;
+  jsShaftGrad.setAttribute('gradientTransform',
+    `translate(${(nx*4.5).toFixed(2)} 0) rotate(${ang.toFixed(2)} 50 88)`);
   jsWasher.setAttribute('transform',
     `translate(${(nx*4.5).toFixed(2)},${(ny*2).toFixed(2)}) rotate(${(nx*7).toFixed(2)} 50 88)`);
   jsShadow.setAttribute('cx', (50+nx*15).toFixed(2));
