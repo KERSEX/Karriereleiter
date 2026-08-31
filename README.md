@@ -9,9 +9,16 @@ vom Praktikanten bis in die Chefetage.
 Abhängigkeiten, keine externen Assets. Grafik, Sound, Musik, Menüs und Cheats
 werden zur Laufzeit erzeugt (Canvas 2D + WebAudio + Gamepad API).
 
-## Starten
+## Spielen
 
-`index.html` im Browser öffnen. Doppelklick genügt (`file://` reicht aus).
+**Direkt im Browser: https://kersex.github.io/Karriereleiter/**
+
+Oder lokal: `index.html` im Browser öffnen. Doppelklick genügt (`file://`
+reicht aus) — das Spiel lädt nichts nach.
+
+Die Seite wird von GitHub Pages ausgeliefert. Der Workflow
+`.github/workflows/pages.yml` veröffentlicht sie bei jedem Push auf den
+Standardbranch neu.
 
 ## Steuerung
 
