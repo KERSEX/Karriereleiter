@@ -388,10 +388,16 @@ function load(k, def){
        return Object.assign(structuredClone(def), r); }catch(e){ return structuredClone(def); }
 }
 function save(){ try{ localStorage.setItem('kl_settings', JSON.stringify(S)); }catch(e){} }
+/* Bestenliste, die ein Browser beim allerersten Start sieht. An der Spitze
+   steht der Hausrekord - wer oben stehen will, muss ihn schlagen. */
+const DEFAULT_SCORES = [
+  ['S.Q',38800],
+  ['CHF',18000],['BOS',14000],['KLD',11000],['ABT',9000],
+  ['PRK',7500],['AZU',6000],['HR ',4500],['IT ',3000],['KAF',2000],
+];
 function loadScores(){
   try{ const r = JSON.parse(localStorage.getItem('kl_scores')); if(Array.isArray(r)&&r.length) return r; }catch(e){}
-  return [['CHF',18000],['BOS',14000],['KLD',11000],['ABT',9000],['PRK',7500],
-          ['AZU',6000],['HR ',4500],['IT ',3000],['KAF',2000],['DU ',1000]];
+  return structuredClone(DEFAULT_SCORES);
 }
 let scores = loadScores();
 function saveScores(){ try{ localStorage.setItem('kl_scores', JSON.stringify(scores)); }catch(e){} }
@@ -2163,10 +2169,7 @@ const settingsMenu = {
   note:()=>'Controller: '+(IN.padIndex>=0? IN.padName : 'keiner verbunden')+
       '\nA/X springen · Start Pause · Select Zurück',
 };
-function loadScoresDefault(){
-  return [['CHF',18000],['BOS',14000],['KLD',11000],['ABT',9000],['PRK',7500],
-          ['AZU',6000],['HR ',4500],['IT ',3000],['KAF',2000],['DU ',1000]];
-}
+function loadScoresDefault(){ return structuredClone(DEFAULT_SCORES); }
 /* --------------------------------------------------------- Tastenmenü */
 let capturing = null;
 const keysMenu = {

@@ -77,7 +77,9 @@ Nach der Chefetage beginnt Runde 2 — schneller, mehr Gegner, mehr Bonus.
 - **Bonus-Uhr**, Extraleben bei 20.000 Punkten, Bonusgegenstände (Aktentasche, Krawatte, Diensthandy).
 - **Karriere-Titel** im HUD, der mit der Punktzahl mitwächst: Praktikant → … → CEO → Legende.
 - **Auftragsanzeige**: Das Zwischenbild sagt vor jeder Etage, was dort zu tun ist.
-- **Bestenliste** mit Kürzel-Eingabe, lokal gespeichert.
+- **Bestenliste** mit Kürzel-Eingabe, lokal im Browser gespeichert. Ganz oben
+  steht der Hausrekord: **S.Q — 38.800 Punkte (Prokurist)**. Wer die Spitze
+  will, muss ihn schlagen.
 - **Kaputte Leitern**, Abkürzungen, Alternativrouten.
 - Vier Schwierigkeitsgrade (Praktikant / Normal / Manager / Burnout).
 - **Arcade-Automat als Rahmen** — Marquee, Bezel, Bedienfeld mit mitlaufendem
