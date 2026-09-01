@@ -352,7 +352,7 @@ const DEFAULTS = {
   scanlines:true, shake:true, scale:0, flashFx:true, cabinet:true,
   difficulty:1,           // 0 Praktikant, 1 Normal, 2 Manager, 3 Burnout
   startLives:3,
-  deadzone:0.35, rumble:true,
+  deadzone:0.35, rumble:true, skin:'buero',
   showFps:false, touchCtl:'auto',
   keys:{
     left:['ArrowLeft','KeyA'], right:['ArrowRight','KeyD'],
@@ -361,6 +361,20 @@ const DEFAULTS = {
     pause:['Escape','KeyP'], back:['Backspace']
   }
 };
+/* Spielfiguren. Die zweite ist eine absichtlich schlecht gefälschte
+   Klempner-Figur: falsche Farben, schiefer Schnauzer, ein Knopf fehlt,
+   zwei verschiedene Schuhe - und das Preisschild hängt noch dran. */
+const SKINS = {
+  buero: { name:'ANGESTELLTER', sub:'Der Standard.',
+           skin:'#f5c99b', shirt:'#f2f5ff', strap:'#2b4bd6', accent:'#e2352b', accent2:'#a81f18',
+           pants:'#2b4bd6', hair:'#3a2a1c', shoeL:'#141414', shoeR:'#141414',
+           cap:null, stache:null, tag:false },
+  temu:  { name:'KLEMPNER', sub:'Fragwürdige Bestellung aus Fernost.',
+           skin:'#f0bb84', shirt:'#e8641e', strap:'#2ec4b6', accent:'#ffd23d', accent2:'#1d8f85',
+           pants:'#2ec4b6', hair:'#4a2f1a', shoeL:'#6b4423', shoeR:'#8a8a8a',
+           cap:'#2fa84f', stache:'#4a2f1a', tag:true },
+};
+function skin(){ return SKINS[S.skin] || SKINS.buero; }
 const DIFF = [
   { name:'PRAKTIKANT', spawn:1.55, spd:0.82, bonus:1.30, label:'gemütlich' },
   { name:'NORMAL',     spawn:1.00, spd:1.00, bonus:1.00, label:'so wie 1981' },
@@ -1462,49 +1476,73 @@ function drawLads(){
 /* -------------------------------------------------------------- Held */
 function drawPlayer(){
   const p=P_; if(!p) return;
+  const K = skin();
   const sc = (CHEAT.minime||kaosFx.tiny)?0.62:1;
   b.save();
   b.translate(p.x+p.w/2, p.y+p.h);
   b.scale(p.dir*sc, sc);
   b.translate(-p.w/2, -p.h);
-  const skin='#f5c99b', shirt='#f2f5ff', tie='#e2352b', pants='#2b4bd6', hair='#3a2a1c', shoe='#141414';
   const walk = (Math.floor(p.anim/3)%4);
   const legFrame = p.onLad ? (Math.floor(p.climbAnim/3)%2) : walk;
+
+  // ---- Kopf: entweder Bürofrisur oder Billig-Mütze mit Schnauzer --------
+  const head = ()=>{
+    px(3,0,6,5,K.skin);
+    if(K.cap){
+      px(2,0,8,2,K.cap);                            // Mützenkrone
+      px(7,2,4,1,K.cap);                            // Schirm nach vorn
+      px(4,0,3,1,'#f2f5ff'); px(5,0,1,1,'#248a40'); // Emblem, sitzt schief
+      px(2,2,1,1,K.hair);                           // Haar hinten raus
+      px(7,3,1,1,'#2b2118');                        // Auge
+      px(8,3,1,1,'#d99a63');                        // Nase
+      px(3,4,6,1,K.stache); px(2,4,1,1,K.stache);   // Schnauzer, einseitig
+    } else {
+      px(2,0,8,2,K.hair); px(2,1,1,2,K.hair);
+      px(7,2,1,1,'#2b2118');
+    }
+  };
   if(!p.alive){
-    px(1,6,9,8,shirt); px(3,1,6,5,skin); px(2,0,8,2,hair);
-    px(0,13,4,3,pants); px(7,13,4,3,pants);
+    px(1,6,9,8,K.shirt); px(3,1,6,5,K.skin); head();
+    px(0,13,4,3,K.pants); px(7,13,4,3,K.pants);
     b.restore();
     return;
   }
-  // Beine
+  // ---- Beine -----------------------------------------------------------
   if(p.onLad){
-    px(1,11,3,5,pants); px(7,11,3,5,pants);
-    if(legFrame){ px(0,12,3,2,pants); px(8,12,3,2,pants); }
-    px(1,15,3,1,shoe); px(7,15,3,1,shoe);
+    px(1,11,3,5,K.pants); px(7,11,3,5,K.pants);
+    if(legFrame){ px(0,12,3,2,K.pants); px(8,12,3,2,K.pants); }
+    px(1,15,3,1,K.shoeL); px(7,15,3,1,K.shoeR);
   } else if(!p.plat){
-    px(1,11,3,4,pants); px(7,11,3,4,pants); px(0,14,4,2,shoe); px(7,14,4,2,shoe);
+    px(1,11,3,4,K.pants); px(7,11,3,4,K.pants); px(0,14,4,2,K.shoeL); px(7,14,4,2,K.shoeR);
   } else {
     const a = (Math.abs(p.vx)>0.05)?legFrame:0;
-    if(a===0||a===2){ px(3,11,3,5,pants); px(6,11,3,5,pants); px(3,15,3,1,shoe); px(6,15,3,1,shoe); }
-    else if(a===1){ px(1,11,3,5,pants); px(7,11,3,4,pants); px(0,15,4,1,shoe); px(7,14,4,2,shoe); }
-    else { px(2,11,3,4,pants); px(6,11,3,5,pants); px(1,14,4,2,shoe); px(6,15,4,1,shoe); }
+    if(a===0||a===2){ px(3,11,3,5,K.pants); px(6,11,3,5,K.pants); px(3,15,3,1,K.shoeL); px(6,15,3,1,K.shoeR); }
+    else if(a===1){ px(1,11,3,5,K.pants); px(7,11,3,4,K.pants); px(0,15,4,1,K.shoeL); px(7,14,4,2,K.shoeR); }
+    else { px(2,11,3,4,K.pants); px(6,11,3,5,K.pants); px(1,14,4,2,K.shoeL); px(6,15,4,1,K.shoeR); }
   }
-  // Rumpf + Krawatte
-  px(2,5,8,7,shirt);
-  px(5,5,2,6,tie); px(5,10,2,2,'#a81f18');
-  // Arme
+  // ---- Rumpf: Hemd mit Krawatte oder Latzhose mit einem Knopf ----------
+  px(2,5,8,7,K.shirt);
+  if(K.cap){
+    px(2,7,2,5,K.strap); px(7,7,2,5,K.strap);      // Latzträger
+    px(3,9,5,3,K.strap);                            // Latz
+    px(3,7,1,1,K.accent);                           // ein Knopf ...
+                                                    // ... der zweite fehlt
+    if(K.tag && (G.frame%40)<20) px(9,10,2,3,'#ffe14d');   // Preisschild
+    else if(K.tag) px(9,10,2,2,'#ffe14d');
+  } else {
+    px(5,5,2,6,K.accent); px(5,10,2,2,K.accent2);
+  }
+  // ---- Arme ------------------------------------------------------------
   if(p.hammer>0){
-    px(9,5,3,3,skin);
+    px(9,5,3,3,K.skin);
   } else if(p.onLad){
     const up = legFrame?0:2;
-    px(0,3+up,2,4,skin); px(10,5-up,2,4,skin);
-  } else if(!p.plat){ px(0,3,2,4,skin); px(10,3,2,4,skin); }
-  else { px(0,6,2,4,skin); px(10,6,2,4,skin); }
-  // Kopf
-  px(3,0,6,5,skin); px(2,0,8,2,hair); px(2,1,1,2,hair);
-  px(7,2,1,1,'#2b2118');           // Auge
+    px(0,3+up,2,4,K.skin); px(10,5-up,2,4,K.skin);
+  } else if(!p.plat){ px(0,3,2,4,K.skin); px(10,3,2,4,K.skin); }
+  else { px(0,6,2,4,K.skin); px(10,6,2,4,K.skin); }
+  head();
   b.restore();
-  // Espresso-Hammer
+  // ---- Espresso-Hammer -------------------------------------------------
   if(p.hammer>0){
     const hb=hammerBox();
     b.save(); b.translate(hb.x,hb.y);
@@ -1638,8 +1676,10 @@ function drawHUD(){
   textS(String(Math.max(G.hi,scores[0]?scores[0][1]:0)).padStart(6,'0'), CW/2, 10, '#fff','center',8);
   textS('BONUS', CW-4, 1, '#57d9ff','right',8);
   textS(String(G.bonus).padStart(5,'0'), CW-4, 10, hurry?'#ff5a4d':'#ffe14d','right',8);
+  const K = skin();
   for(let i=0;i<Math.min(G.lives-1,6);i++){
-    px(52+i*8,11,4,6,'#2b4bd6'); px(53+i*8,8,2,3,'#f5c99b');
+    px(52+i*8,11,4,6,K.pants); px(53+i*8,8,2,3,K.skin);
+    if(K.cap) px(52+i*8,7,4,1,K.cap);
   }
   textS('L='+String(G.loop).padStart(2,'0'), 96, 18, '#8f9ab8','left',7);
   textS(careerTitle(G.score), CW-4, 18, '#8f9ab8','right',7);
@@ -1936,12 +1976,14 @@ function drawHowHigh(){
     px(58,y,110,4, on?'#e2503c':'#3a2018'); px(58,y,110,1,on?'#ff8f78':'#4a2a20');
     textS(((i+1)*25)+'M', 50, y-4, on?'#ffd23d':'#4a5168','right',8);
     if(i===G.stage%4){
-      const hx=142, hy=y-16, sw=(Math.floor(G.frame/12)%2)?1:0;
-      px(hx+1+sw,hy+11,3,5,'#2b4bd6'); px(hx+6-sw,hy+11,3,5,'#2b4bd6');
-      px(hx+1,hy+15,3,1,'#141414'); px(hx+6,hy+15,3,1,'#141414');
-      px(hx+2,hy+5,7,7,'#f2f5ff'); px(hx+5,hy+5,2,6,'#e2352b');
-      px(hx,hy+6,2,4,'#f5c99b'); px(hx+9,hy+6,2,4,'#f5c99b');
-      px(hx+3,hy,6,5,'#f5c99b'); px(hx+2,hy,8,2,'#3a2a1c');
+      const K=skin(), hx=142, hy=y-16, sw=(Math.floor(G.frame/12)%2)?1:0;
+      px(hx+1+sw,hy+11,3,5,K.pants); px(hx+6-sw,hy+11,3,5,K.pants);
+      px(hx+1,hy+15,3,1,K.shoeL); px(hx+6,hy+15,3,1,K.shoeR);
+      px(hx+2,hy+5,7,7,K.shirt); px(hx+5,hy+5,2,6,K.accent);
+      px(hx,hy+6,2,4,K.skin); px(hx+9,hy+6,2,4,K.skin);
+      px(hx+3,hy,6,5,K.skin);
+      if(K.cap){ px(hx+2,hy,8,3,K.cap); px(hx+3,hy+4,5,1,K.stache); }
+      else px(hx+2,hy,8,2,K.hair);
     }
   }
   textS('RUNDE '+G.loop+'  -  '+DIFF[S.difficulty].name, CW/2, CH-26,'#8f9ab8','center',8);
@@ -2156,6 +2198,9 @@ const CODES = {
   'LEBEN':     {n:'UNBEFRISTET',       d:'Neun Leben, wie eine Bürokatze.',                     t:()=>{ G.lives=9; CHEAT.used=true; toast('9 LEBEN'); }},
   'CHEFETAGE': {n:'ETAGEN-WAHL',       d:'Schaltet die Etagen-Auswahl im Terminal frei.',        t:()=>{ CHEAT.unlockAll=true; toast('ETAGEN FREIGESCHALTET'); }},
   'IDDQD':     {n:'ALTE SCHULE',       d:'Ein Gruß an 1993. Wirkt wie HOMEOFFICE.',             t:()=>tog('homeoffice','GEISTMODUS')},
+  'TEMU':      {n:'BILLIG-KLEMPNER',   d:'Spielfigur gegen eine sehr günstige Fälschung tauschen.',
+                t:()=>{ S.skin = (S.skin==='temu')?'buero':'temu'; save();
+                        toast(S.skin==='temu'?'KLEMPNER ENTPACKT':'FIGUR ZURÜCKGETAUSCHT', 2.2); }},
 };
 function tog(k,name){
   CHEAT[k]=!CHEAT[k];
@@ -2192,7 +2237,7 @@ const cheatScreen = {
     const act = Object.keys(CH_DEF).filter(k=>CHEAT[k]&&k!=='used');
     h += `<div class="m-note">AKTIV: ${act.length? act.map(a=>a.toUpperCase()).join(', ') : '—'}
 GEFUNDEN: ${unlockedCodes.list.length}/${Object.keys(CODES).length}
-${unlockedCodes.list.length? unlockedCodes.list.join('  ') : 'Tipp: Der Chef nennt das Chaos beim Namen.'}</div>`;
+${unlockedCodes.list.length? unlockedCodes.list.join('  ') : 'Tipp: Der Chef nennt das Chaos beim Namen. Und ein Versandhaus eine Figur.'}</div>`;
     h += `<div class="m-foot">Tastatur tippt direkt · ← Löschen · OK Ausführen · ✕ Schließen</div>`;
     return h;
   },
@@ -2246,6 +2291,7 @@ const pauseMenu = {
     {label:'Weiter spielen', val:()=>'▶', go:()=>closeMenu()},
     {label:'Optionen',       val:()=>'▶', go:()=>openMenu(settingsMenu)},
     {label:'Cheat-Terminal', val:()=>'▶', go:()=>cheatScreen.open()},
+    {label:'Figur wechseln',  val:()=>skin().name, go:()=>openMenu(skinMenu)},
     {label:'Etage wählen',   val:()=>CHEAT.unlockAll?'▶':'🔒', dis:()=>!CHEAT.unlockAll,
       go:()=>{ if(CHEAT.unlockAll) openMenu(stageMenu); }},
     {gap:true},
@@ -2253,6 +2299,19 @@ const pauseMenu = {
     {label:'Zum Titelbild',  val:()=>'⌂', go:()=>{ closeAllMenus(); G.state='title'; G.timer=0; stopMusic(); }},
   ],
   note:()=>'Etage '+((G.stage%4)+1)+' · Runde '+G.loop+' · Punkte '+G.score,
+};
+const skinMenu = {
+  title:'FIGUR', sub:'REINE OPTIK - PUNKTE ZÄHLEN NORMAL',
+  items: Object.keys(SKINS).map(k=>({
+    label: SKINS[k].name,
+    val: ()=> S.skin===k ? '<span style="color:#7cf29a">GEWÄHLT</span>' : '-',
+    on: ()=> S.skin===k,
+    go: ()=>{ S.skin=k; save(); SFX.ok(); drawMenu(); }
+  })).concat([
+    {gap:true},
+    {label:'Zurück', val:()=>'◀', go:()=>closeMenu()},
+  ]),
+  note: ()=> skin().sub,
 };
 const stageMenu = {
   title:'ETAGEN-WAHL', sub:'NUR PER CHEAT',

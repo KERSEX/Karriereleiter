@@ -88,6 +88,8 @@ Nach der Chefetage beginnt Runde 2 — schneller, mehr Gegner, mehr Bonus.
 
 ## Cheat-Terminal
 
+Die Figur lässt sich auch ohne Code wechseln: **Pause → Figur wechseln**.
+
 Codes lassen sich **jederzeit einfach eintippen** — im Titelbild, mitten im
 Spiel, egal wo. Wer `KAOS` tippt, bekommt sofort das Cheat-Terminal aufgeklappt
 und den Chaos-Modus eingeschaltet; das gilt für jeden Code der Liste. Wer lieber
@@ -112,6 +114,7 @@ Punkte kommen nicht in die Bestenliste.
 | `LEBEN` | 9 Leben |
 | `CHEFETAGE` | Etagen-Auswahl im Pausemenü freischalten |
 | `IDDQD` | Gruß an 1993 |
+| `TEMU` | **Billig-Klempner** — tauscht die Spielfigur gegen eine sehr günstig wirkende Fälschung: grüne Mütze mit schiefem Emblem, einseitiger Schnauzer, orangefarbenes Hemd, türkise Latzhose mit genau einem Knopf, zwei verschiedene Schuhe und ein Preisschild, das noch dranhängt. Reine Optik — die Punkte zählen normal. |
 
 Und natürlich: **↑ ↑ ↓ ↓ ← → ← → B A** schaltet alles auf einmal frei.
 
