@@ -693,7 +693,7 @@ function stage3(){
   for(const [l,r] of halves){ R(86,l); R(138,r); }
   R(56,ground); R(168,ground);
   return {
-    name:'SERVERRAUM', meters:75, style:'server',
+    name:'SERVERRAUM', meters:75, style:'server', bonusMul:2.2,
     plats, lads, rivets,
     start:{x:16,y:0}, chef:{x:112,y:66,type:'sitter'}, goal:{x:150,y:66},
     items:[ mkItem(60,halves[0][1],'tasche'), mkItem(40,halves[2][0],'handy') ],
@@ -731,6 +731,13 @@ function stage4(){
   };
 }
 const STAGES=[stage1,stage2,stage3,stage4];
+// Was auf der Etage zu tun ist - steht im Zwischenbild und beim Steckerziehen
+const AUFTRAG = [
+  'HOCH ZUR URKUNDE',
+  'HOCH ZUR URKUNDE',
+  'ALLE 8 STECKER ZIEHEN',
+  'HOCH ZUR URKUNDE',
+];
 
 /* ===================================================================== */
 /*  SPIELZUSTAND                                                         */
@@ -752,11 +759,16 @@ let P_ = null;                // Spieler
 let barrels=[], flames=[], springs=[], memos=[], parts=[], pops=[], elevPlats=[];
 let chef = null, kaosNext = 0, kaosFx = {}, hurry=false;
 
+/* Titel jeweils mit Kurzform - in der Bestenliste ist nur Platz für zehn
+   Zeichen, und abgeschnittene Wörter sehen aus wie ein Fehler. */
 const CAREER = [
-  [0,'PRAKTIKANT'],[3000,'AUSHILFE'],[7000,'SACHBEARBEITER'],[12000,'TEAMLEITER'],
-  [20000,'ABTEILUNGSLEITER'],[32000,'PROKURIST'],[50000,'VORSTAND'],[80000,'CEO'],[120000,'LEGENDE']
+  [0,'PRAKTIKANT','PRAKT.'],   [3000,'AUSHILFE','AUSHILFE'],
+  [7000,'SACHBEARBEITER','SACHBEARB.'], [12000,'TEAMLEITER','TEAMLEITER'],
+  [20000,'ABTEILUNGSLEITER','ABT.LEITER'], [32000,'PROKURIST','PROKURIST'],
+  [50000,'VORSTAND','VORSTAND'], [80000,'CEO','CEO'], [120000,'LEGENDE','LEGENDE']
 ];
-function careerTitle(sc){ let t=CAREER[0][1]; for(const [v,n] of CAREER) if(sc>=v) t=n; return t; }
+function careerTitle(sc){ let t=CAREER[0][1]; for(const c of CAREER) if(sc>=c[0]) t=c[1]; return t; }
+function careerShort(sc){ let t=CAREER[0][2]; for(const c of CAREER) if(sc>=c[0]) t=c[2]; return t; }
 function diff(){ return DIFF[clamp(S.difficulty,0,3)]; }
 function spdMul(){
   let m = diff().spd * (1 + (G.loop-1)*0.12);
@@ -785,7 +797,7 @@ function buildLevel(){
   }
   barrels=[]; flames=[]; springs=[]; memos=[]; parts=[]; pops=[];
   hurry=false;
-  G.bonus = Math.round((5000 + G.loop*400) * diff().bonus / 100)*100;
+  G.bonus = Math.round((5000 + G.loop*400) * diff().bonus * (L.bonusMul||1) / 100)*100;
   G.bonusT = 0;
   L.spawnT = 1.2; L.flameT = 3.0; L.springT = 1.0; L.memoT = 2.0; L.fireT = 4.0;
   L.done = false; L.winT = 0;
@@ -1198,9 +1210,18 @@ function checkCollisions(){
       }
     }
   }
-  // Ziel erreicht?
+  // Ziel erreicht? Auf der Steckeretage erst, wenn der Server aus ist.
   const g = L.goal;
-  if(!L.done && aabb(box,{x:g.x-9,y:g.y-20,w:18,h:20})) winLevel(false);
+  if(!L.done && aabb(box,{x:g.x-9,y:g.y-20,w:18,h:20})){
+    if(L.rivets && L.rivets.some(r=>!r.got)){
+      if(brokenHintT<=0){
+        brokenHintT = 2.2;
+        const offen = L.rivets.filter(r=>!r.got).length;
+        pop(g.x-34, g.y-30, 'NOCH '+offen+' STECKER!', '#ff6a5c');
+        SFX.no();
+      }
+    } else winLevel(false);
+  }
 }
 function killPlayer(reason){
   if(!P_.alive) return;
@@ -1642,6 +1663,7 @@ function drawRivet(r){
   px(r.x-4,r.y-5,8,7,'#f5f7ff'); px(r.x-3,r.y-4,6,5,'#3a4256');
   px(r.x-2,r.y-3,1,3,'#ffd23d'); px(r.x,r.y-3,1,3,'#ffd23d');
   px(r.x-4,r.y+2,8,2,'#8f9ab8');
+  if((G.frame%50)<25) px(r.x-1,r.y-10,2,3,'#7cf2ff');   // Wegweiser
 }
 function drawGoal(){
   const g=L.goal, f=(G.frame%40)<20;
@@ -1681,9 +1703,17 @@ function drawHUD(){
     px(52+i*8,11,4,6,K.pants); px(53+i*8,8,2,3,K.skin);
     if(K.cap) px(52+i*8,7,4,1,K.cap);
   }
-  textS('L='+String(G.loop).padStart(2,'0'), 96, 18, '#8f9ab8','left',7);
-  textS(careerTitle(G.score), CW-4, 18, '#8f9ab8','right',7);
-  textS(L?L.meters+'m':'', 4, 18, '#ffb03a','left',7);
+  // Mittlere Spalte: normalerweise die Runde, auf der Steckeretage der
+  // Fortschritt - beides nebeneinander passt nicht in die Zeile.
+  textS(L?L.meters+'M':'', 4, 18, '#ffb03a','left',8);
+  if(L && L.rivets){
+    const offen = L.rivets.filter(r=>!r.got).length;
+    textS('STECKER '+(L.rivets.length-offen)+'/'+L.rivets.length, 88, 18,
+          offen? '#7cf2ff' : '#7cf29a', 'left', 8);
+  } else {
+    textS('L='+String(G.loop).padStart(2,'0'), 96, 18, '#8f9ab8','left',8);
+  }
+  textS(careerShort(G.score), CW-4, 18, '#8f9ab8','right',8);
   if(CHEAT.kaos){
     const rain = ['#ff4d3d','#ffb03a','#ffd23d','#7cf29a','#4de1ff','#8f6bff','#ff8fd0'];
     textS('KAOS', 56, 18, rain[(G.frame>>2)%rain.length], 'left', 8);
@@ -1959,10 +1989,10 @@ function drawScores(){
   textS('DIE KARRIERE-CHRONIK', CW/2, 40,'#8f9ab8','center',7);
   scores.slice(0,10).forEach((s,i)=>{
     const y=58+i*17, c = i===0?'#ffd23d':(i<3?'#fff':'#a9b6d4');
-    textS(String(i+1).padStart(2,' ')+'.', 26, y, c,'left',9);
-    textS(s[0], 58, y, c,'left',9);
-    textS(String(s[1]).padStart(6,'0'), 118, y, c,'left',9);
-    textS(careerTitle(s[1]).slice(0,9), CW-8, y+1, '#5f6a86','right',7);
+    textS(String(i+1).padStart(2,' ')+'.', 20, y, c,'left',9);
+    textS(s[0], 54, y, c,'left',9);
+    textS(String(s[1]).padStart(6,'0'), 106, y, c,'left',9);
+    textS(careerShort(s[1]), CW-8, y+1, '#5f6a86','right',8);
   });
   if((G.frame%60)<40) textS('START DRÜCKEN', CW/2, CH-24,'#fff','center',9);
 }
@@ -1986,6 +2016,7 @@ function drawHowHigh(){
       else px(hx+2,hy,8,2,K.hair);
     }
   }
+  textS('AUFTRAG: '+AUFTRAG[G.stage%4], CW/2, 68,'#7cf29a','center',8);
   textS('RUNDE '+G.loop+'  -  '+DIFF[S.difficulty].name, CW/2, CH-26,'#8f9ab8','center',8);
 }
 function drawGameOver(){

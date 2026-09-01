@@ -66,7 +66,7 @@ austrinken.
 |---|---|---|
 | 25 m | **Großraumbüro** | Schräge Schreibtischreihen, der Chef rollt Kaffeetassen herunter, aus dem brennenden Papierkorb kriechen Deadlines. |
 | 50 m | **Aufzugschacht** | Fahrende Aufzüge, springende Tacker. Aufzug B ist eine riskante Express-Abkürzung von ganz unten bis zur Zielebene. |
-| 75 m | **Serverraum** | Acht Netzstecker ziehen, dann stürzt der Chef mitsamt Serverschrank ab. Umherziehende Deadlines. |
+| 75 m | **Serverraum** | Acht Netzstecker ziehen, dann stürzt der Chef mitsamt Serverschrank ab. Die Urkunde hilft hier nicht — solange ein Stecker steckt, läuft der Server. Offene Stecker blinken, das HUD zählt mit, und es gibt entsprechend mehr Zeit. Umherziehende Deadlines. |
 | 100 m | **Chefetage** | Förderbänder schieben dich weg, Meeting-Einladungen fahren darauf. Der Chef wirft schneller. |
 
 Nach der Chefetage beginnt Runde 2 — schneller, mehr Gegner, mehr Bonus.
@@ -77,6 +77,7 @@ Nach der Chefetage beginnt Runde 2 — schneller, mehr Gegner, mehr Bonus.
 - **Sprung-Kombos** — mehrere Gegner in einem Sprung: 100 → 300 → 500 → 800 Punkte.
 - **Bonus-Uhr**, Extraleben bei 20.000 Punkten, Bonusgegenstände (Aktentasche, Krawatte, Diensthandy).
 - **Karriere-Titel** im HUD, der mit der Punktzahl mitwächst: Praktikant → … → CEO → Legende.
+- **Auftragsanzeige**: Das Zwischenbild sagt vor jeder Etage, was dort zu tun ist.
 - **Bestenliste** mit Kürzel-Eingabe, lokal gespeichert.
 - **Kaputte Leitern**, Abkürzungen, Alternativrouten.
 - Vier Schwierigkeitsgrade (Praktikant / Normal / Manager / Burnout).
