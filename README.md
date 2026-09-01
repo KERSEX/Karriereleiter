@@ -57,8 +57,7 @@ der Landung gedrückt zählt auch).
 
 **Kaputte Leitern** sind rostbraun statt blau, haben eine sichtbare Lücke mit
 Warnband und enden nach kurzer Zeit — die Einstieghilfe fasst sie gar nicht
-erst an. Und mit dem Espresso-Hammer in der Hand klettert niemand: erst
-austrinken.
+erst an.
 
 ## Die vier Etagen
 
@@ -73,7 +72,7 @@ Nach der Chefetage beginnt Runde 2 — schneller, mehr Gegner, mehr Bonus.
 
 ## Features
 
-- **Espresso-Hammer** — kurzzeitig alles zerschlagen, was rollt (dafür kein Klettern).
+- **Espresso-Hammer** — kurzzeitig alles zerschlagen, was rollt. Klettern geht damit auch: eine Hand an der Sprosse, die andere am Becher.
 - **Sprung-Kombos** — mehrere Gegner in einem Sprung: 100 → 300 → 500 → 800 Punkte.
 - **Bonus-Uhr**, Extraleben bei 20.000 Punkten, Bonusgegenstände (Aktentasche, Krawatte, Diensthandy).
 - **Karriere-Titel** im HUD, der mit der Punktzahl mitwächst: Praktikant → … → CEO → Legende.

@@ -878,7 +878,7 @@ function updatePlayer(dt){
       p.onLad=false; p.plat=l.bot; p.y = surfaceY(l.bot,p.x+p.w/2)-p.h; p.vy=0;
     }
     p.x = l.x - p.w/2;
-    if(IN.hit.jump && p.hammer<=0){ // von Leiter abspringen
+    if(IN.hit.jump){ // von Leiter abspringen
       p.onLad=false; p.vy=-1.6; p.plat=null; p.jump=true; SFX.jump();
     }
     p.lastFeet = p.y+p.h;
@@ -928,7 +928,8 @@ function updatePlayer(dt){
     }
   }
   // --- Leiter greifen ---------------------------------------------------
-  if(p.hammer<=0){
+  {
+    // Mit dem Espresso in der Hand darf geklettert werden.
     const feetNow = p.y+p.h;
     const steering = LEFT||RIGHT;
     if(IN.held.up){
@@ -950,10 +951,6 @@ function updatePlayer(dt){
         if(n){ const d=Math.sign(n.x-cx); p.x += d*(p.plat.conv?1.3:0.75); p.dir = d||p.dir; }
       }
     }
-  }
-  if(p.hammer>0 && IN.held.up && brokenHintT<=0 && findLadder(cx,p.y+p.h,'up',16)){
-    brokenHintT = 2.2;
-    pop(p.x-20, p.y-14, 'ERST AUSTRINKEN', '#ffb03a');
   }
   if(p.y > PH+20){ killPlayer('sturz'); }
   if(p.plat && p.vy>0) p.vy=0;
@@ -1197,7 +1194,7 @@ function checkCollisions(){
     if(h.used) continue;
     if(aabb(box,{x:h.x-6,y:h.y,w:13,h:20})){
       h.used=true; p.hammer = CHEAT.kaffee? 99999 : Math.round(420*diff().bonus);
-      p.onLad=false; SFX.coin(); playMusic('hammer'); pop(h.x-14,h.y-8,'ESPRESSO!','#c98b4b');
+      SFX.coin(); playMusic('hammer'); pop(h.x-14,h.y-8,'ESPRESSO!','#c98b4b');
     }
   }
   if(L.rivets){
@@ -1454,7 +1451,7 @@ function drawPlats(){
   }
 }
 function nearLadder(l){
-  if(!P_||!P_.alive||P_.hammer>0) return false;
+  if(!P_||!P_.alive) return false;
   const cx=P_.x+P_.w/2, feet=P_.y+P_.h;
   return Math.abs(cx-l.x)<=LAD_GRAB+2 && feet>=l.yTop-10 && feet<=l.yBot+6;
 }
@@ -1488,7 +1485,7 @@ function drawLads(){
     }
   }
   // Blinkender Pfeil, wenn man direkt am Leiterfuss steht
-  if(P_ && P_.alive && P_.plat && P_.hammer<=0 && (G.frame%40)<24){
+  if(P_ && P_.alive && P_.plat && (G.frame%40)<24){
     const cx=P_.x+P_.w/2, feet=P_.y+P_.h;
     const l = findLadder(cx, feet, 'up');
     if(l) text('↑', l.x, P_.y-11, '#ffe14d', 'center', 8);
@@ -1554,7 +1551,11 @@ function drawPlayer(){
     px(5,5,2,6,K.accent); px(5,10,2,2,K.accent2);
   }
   // ---- Arme ------------------------------------------------------------
-  if(p.hammer>0){
+  if(p.hammer>0 && p.onLad){
+    const up = legFrame?0:2;
+    px(0,3+up,2,4,K.skin);        // eine Hand hält die Sprosse ...
+    px(9,5,3,3,K.skin);           // ... die andere den Espresso
+  } else if(p.hammer>0){
     px(9,5,3,3,K.skin);
   } else if(p.onLad){
     const up = legFrame?0:2;
@@ -1566,6 +1567,9 @@ function drawPlayer(){
   // ---- Espresso-Hammer -------------------------------------------------
   if(p.hammer>0){
     const hb=hammerBox();
+    // Arm zwischen Schulter und Stiel, sonst schwebt der Hammer frei
+    const sx = p.dir>0 ? p.x+p.w-3 : p.x+1, sy = p.y+5, hy = hb.y+4;
+    px(sx, Math.min(sy,hy), 2, Math.abs(hy-sy)+3, skin().skin);
     b.save(); b.translate(hb.x,hb.y);
     px(0,4,13,3,'#8a5a2b');
     const cx = p.dir>0?9:0;
